@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState,useContext} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,7 +11,30 @@ import {Colors} from './enums';
 import {Fonts} from './enums';
 import UserIcon from './assets/icons/UserIcon';
 import {ScrollView} from 'react-native-gesture-handler';
+import {connState} from './App';
+import UserClass from './classes/UserClass';
 export default function GetInfoScreen() {
+
+  const [name, setName] = useState('');
+  const [error, setError] = useState('');
+  const {state, dispatch} = useContext(connState);
+
+  const createUser = async (name: string): Promise<boolean> => {
+    const userIns = new UserClass();
+    try {
+      await userIns.createUser(name);
+      console.log('User created...');
+      dispatch({type:"connect"})
+      return true;
+    } catch (error) {
+      if (error.message === 'name-not-valid') {
+        console.log('Aye Aye name is not valid');
+        setError('Name must be at least 3 characters.');
+        console.log(error.stack);
+      }
+      return false;
+    }
+  };
   return (
     <ScrollView>
       <View style={styles.screenStyle}>
@@ -21,8 +44,20 @@ export default function GetInfoScreen() {
           </View>
 
           <View style={styles.formContainer}>
+            {error ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            ) : null}
             <View style={{flexDirection: 'row-reverse'}}>
-              <TextInput style={styles.nameInput} placeholder="Your name" />
+              <TextInput
+                onChangeText={text => setName(text)}
+                onFocus={() => {
+                  setError('');
+                }}
+                style={styles.nameInput}
+                placeholder="Your name"
+              />
               <View style={styles.userIconContainer}>
                 <UserIcon width={30} height={30} fill={Colors.blue} />
               </View>
@@ -30,7 +65,7 @@ export default function GetInfoScreen() {
             <TouchableOpacity
               style={styles.submitButtonContainer}
               onPress={() => {
-                console.log('Submitted');
+                createUser(name);
               }}
               disabled={false}>
               <View>
@@ -119,5 +154,15 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontFamily: Fonts.bold,
     fontSize: 18,
+  },
+  errorContainer: {
+    width: '100%',
+    maxWidth: 300,
+    marginBottom: 5,
+  },
+  errorText: {
+    fontFamily: Fonts.regular,
+    color: '#F86F6F',
+    fontSize: 14,
   },
 });

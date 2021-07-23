@@ -1,11 +1,14 @@
 export enum Colors {
   blue = '#313745',
   white = '#FFFFFF',
+  gray = "#E7E7E7"
 }
 
 export enum Fonts{
   bold = "OpenSansBold",
-  regular = "OpenSansRegular"
+  regular = "OpenSansRegular",
+  extraBold = "OpenSansExtraBold",
+
 }
 
 export enum credentials {
