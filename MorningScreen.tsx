@@ -112,7 +112,7 @@ export default function MorningScreen({route}: any) {
                 fontFamily: enums.Fonts.extraBold,
                 fontSize: 32,
               }}>
-              {weather ? Math.round(weather.main.temp) + '°' : null}
+              {weather ? Math.trunc(weather.main.temp) + '°' : null}
             </Text>
             <Text
               style={{
@@ -131,7 +131,7 @@ export default function MorningScreen({route}: any) {
             }}>
             around{' '}
             {filteredForecast
-              ? Math.round(filteredForecast.tonight.temp)
+              ? Math.trunc(filteredForecast.tonight.temp)
               : null}
             ° to night
           </Text>
@@ -167,8 +167,7 @@ export default function MorningScreen({route}: any) {
             }}
             afternoonData={{
               temp: filteredForecast?.afternoonFirst?.temp,
-              // name: filteredForecast?.afternoonFirst?.icon,
-              name: '02d',
+              name: filteredForecast?.afternoonFirst?.icon,
               dayColor: enums.Colors.blue,
               nightColor: enums.Colors.blue,
               height: '35',
@@ -189,8 +188,7 @@ export default function MorningScreen({route}: any) {
             }}
             afternoonData={{
               temp: filteredForecast?.afternoonDayAfter?.temp,
-              // name: filteredForecast?.afternoonDayAfter?.icon,
-              name: '01d',
+              name: filteredForecast?.afternoonDayAfter?.icon,
               dayColor: enums.Colors.blue,
               nightColor: enums.Colors.blue,
               height: '35',
@@ -218,8 +216,7 @@ export default function MorningScreen({route}: any) {
             }}
             afternoonData={{
               temp: filteredForecast?.afternoonThirdDay?.temp,
-              // name: filteredForecast?.afternoonThirdDay?.icon,
-              name: '09d',
+              name: filteredForecast?.afternoonThirdDay?.icon,
               dayColor: enums.Colors.blue,
               nightColor: enums.Colors.blue,
               height: '35',

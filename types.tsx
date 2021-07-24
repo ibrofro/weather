@@ -135,13 +135,13 @@ export type forecastWeatherType = {
 
 export type forecastItemType = {date: number; temp: number; icon: string};
 export type filteredForecastWeatherType = {
-  tonight:{temp:number | undefined} | undefined;
-  morningFirst: forecastItemType | undefined;
-  afternoonFirst: forecastItemType | undefined;
-  morningDayAfter: forecastItemType | undefined;
-  afternoonDayAfter: forecastItemType | undefined;
-  morningThirdDay: forecastItemType | undefined;
-  afternoonThirdDay: forecastItemType | undefined;
-  morningFourthDay: forecastItemType | undefined;
-  afternoonFourthDay: forecastItemType | undefined;
+  tonight:{temp:number}  ;
+  morningFirst: forecastItemType ;
+  afternoonFirst: forecastItemType ;
+  morningDayAfter: forecastItemType ;
+  afternoonDayAfter: forecastItemType ;
+  morningThirdDay: forecastItemType ;
+  afternoonThirdDay: forecastItemType ;
+  morningFourthDay: forecastItemType ;
+  afternoonFourthDay: forecastItemType ;
 };

@@ -5,23 +5,26 @@ import IconExchanger from './IconExchanger';
 import * as enums from '../enums';
 export default function ForecastOneDay(props: {
   style: any;
-  epochTime?: number;
+  epochTime: number;
   morningData: {
-    temp?: number;
-    name?: string;
-    dayColor?: string;
-    nightColor?: string;
-    height?: string;
+    temp: number;
+    name: string;
+    dayColor: string;
+    nightColor: string;
+    height: string;
   };
   afternoonData: {
-    temp?: number;
-    name?: string;
-    dayColor?: string;
-    nightColor?: string;
-    height?: string;
+    temp: number;
+    name: string;
+    dayColor: string;
+    nightColor: string;
+    height: string;
   };
 }) {
-  const dateIns = new TimeClass().getDate(props.epochTime);
+  const newDate = new Date().getTime() / 1000;
+  const dateIns = new TimeClass().getDate(
+    props.epochTime ? props.epochTime : newDate,
+  );
   return (
     <>
       <View>
@@ -40,7 +43,9 @@ export default function ForecastOneDay(props: {
           </View>
           <View style={props.style.separator}></View>
           <View>
-            <Text style={props.style.temp}>{Math.round(props.morningData.temp)}°C</Text>
+            <Text style={props.style.temp}>
+              {Math.trunc(props.morningData.temp)}°C
+            </Text>
           </View>
         </View>
       </View>
@@ -58,7 +63,9 @@ export default function ForecastOneDay(props: {
           </View>
           <View style={props.style.separator}></View>
           <View>
-            <Text style={props.style.temp}>{Math.round(props.afternoonData.temp)}°C</Text>
+            <Text style={props.style.temp}>
+              {Math.trunc(props.afternoonData.temp)}°C
+            </Text>
           </View>
         </View>
       </View>

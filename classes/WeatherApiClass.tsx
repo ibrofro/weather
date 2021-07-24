@@ -85,15 +85,15 @@ export default class WeatherApiClass {
     const epochThirdDay = thirdDay.getTime() / 1000;
     const epochFourthDay = fourthDay.getTime() / 1000;
 
-    let tonight;
-    let morningFirst;
-    let afternoonFirst;
-    let morningDayAfter;
-    let afternoonDayAfter;
-    let morningThirdDay;
-    let afternoonThirdDay;
-    let morningFourthDay;
-    let afternoonFourthDay;
+    let tonight = 0;
+    let morningFirst:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let afternoonFirst:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let morningDayAfter:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let afternoonDayAfter:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let morningThirdDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let afternoonThirdDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let morningFourthDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let afternoonFourthDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
 
     for (let i = 0; i < data.list.length; i++) {
       const d = data.list[i];
