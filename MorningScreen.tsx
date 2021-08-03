@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useContext, useRef} from 'react';
 import {StyleSheet, Text, View, ScrollView, AppState} from 'react-native';
 import WeatherApiClass from './classes/WeatherApiClass';
 import IconExchanger from './components/IconExchanger';
@@ -13,27 +13,40 @@ import {
 import TimeClass from './classes/TimeClass';
 import ForecastOneDay from './components/ForecastOneDay';
 import {forecastDayStyle} from './styles/forecastStyle';
+import {connState} from './App';
 
 export default function MorningScreen({route, navigation}: any) {
-  const [weather, setWeather] = useState<weatherResponseType>(
-    route.params.weather,
-  );
+  let {
+    foregroundState,
+    setForegroundState,
+    weatherData,
+    setWeatherData,
+    filteredForecast,
+    setFilteredForecast,
+    weatherAndForecastData,
+    setWeatherAndForecastData,
+  } = useContext(connState);
+
+  const firstMount = useRef(false);
+  const isMounted = useRef(false);
+
+  // const [weather, setWeather] = useState<weatherResponseType>(
+  //   route.params.weather,
+  // );
   // const [forecastWeather, setForecastWeather] = useState<forecastWeatherType>(
   //   route.params.forecastWeather,
   // );
-  const [filteredForecast, setFilteredForecast] =
-    useState<filteredForecastWeatherType>(route.params.filteredForecastWeather);
+  // const [filteredForecast, setFilteredForecast] =
+  //   useState<filteredForecastWeatherType>(route.params.filteredForecastWeather);
   const [error, setError] = useState<string>('');
   // const appState = useRef(AppState.currentState);
   // const [appStateVisible, setAppStateVisible] = useState(appState.current);
-  const [foreground, setForeground] = useState<boolean>(false);
   const dateIns = new TimeClass();
   const getCoords = async () => {
     try {
       const {status} = await Location.requestForegroundPermissionsAsync();
       if (status === 'granted') {
         const location = await Location.getCurrentPositionAsync({accuracy: 6});
-        console.log(location);
         return location;
       } else {
         console.log('denied');
@@ -45,98 +58,89 @@ export default function MorningScreen({route, navigation}: any) {
     }
   };
 
-  const _handleAppStateChange = (nextAppState: any) => {
-    // if (
-    //   appState.current.match(/inactive|background/) &&
-    //   nextAppState === 'active'
-    // ) {
-    //   console.log('App has come to the foreground!');
-    //   setForeground(true);
-    // } else {
-    //   setForeground(false);
-    // }
-    console.log('App is in the foreground');
-    setForeground(true);
+  const updateWeather = async () => {
+    try {
+      const {granted} = await Location.getForegroundPermissionsAsync();
+      if (granted) {
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: 6,
+        });
+        console.log(location);
+        const longitude = location.coords.longitude;
+        const latitude = location.coords.latitude;
 
-    // appState.current = nextAppState;
-    // setAppStateVisible(appState.current);
-    // console.log('AppState', appState.current);
-  };
-  useEffect(() => {
-    if (foreground) {
-      setError('');
+        const ins = new WeatherApiClass(
+          String(longitude),
+          String(latitude),
+          'metric',
+        );
 
-      (async () => {
-        // Get coordinates
-        const coords = await getCoords();
-        const longitude = coords?.coords.longitude;
-        const latitude = coords?.coords.latitude;
+        // Get the weather data.
+        const weather = await ins.getWeather();
+        const icon = weather.weather[0].icon;
+        console.log('weather ==> ' + JSON.stringify(weather));
+        // Get forecast weather
+        const rawForecastWeather = await ins.getForecastWeather();
+        let filteredForecastWeather =
+          ins.filterForecastData(rawForecastWeather);
 
-        try {
-          const ins = new WeatherApiClass(
-            String(longitude),
-            String(latitude),
-            'metric',
-          );
-          
-          // Get the weather data.
-          const weather = await ins.getWeather();
-          const icon = weather.weather[0].icon;
-
-          // Get forecast weather
-          const rawForecastWeather = await ins.getForecastWeather();
-          let filteredForecastWeather =
-            ins.filterForecastData(rawForecastWeather);
-
-          // Stay or go to evening screen
-          // with weather data.
-          if (icon.indexOf('n') !== -1) {
+        // Stay or go to evening screen
+        // with weather data.
+        if (icon.indexOf('n') !== -1) {
+          if (isMounted.current) {
             navigation.navigate('Evening', {
               weather: weather,
               filteredForecastWeather: filteredForecastWeather,
             });
-          } else {
-            setWeather(weather);
-            setFilteredForecast(filteredForecastWeather);
           }
-        } catch (error) {
-          console.log(error);
-          setForeground(false);
-          setError('Error while getting the weather');
+        } else {
+          if (isMounted.current) {
+            setWeatherData(weather);
+            setFilteredForecast(filteredForecastWeather);
+            console.log('Weather updated due to AppState Change...');
+          }
         }
-        setForeground(false);
-      })();
+      } else {
+        if (isMounted.current) {
+          setError("Can't get your location");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      if (isMounted.current) {
+        setError('Error while retrieving the weather');
+      }
     }
-  }, [foreground]);
+  };
 
   useEffect(() => {
-    // setWeather(route.params.weather);
-    // setForecastWeather(route.params.forecastWeather);
-    // setFilteredForecast(route.params.filteredForecastWeather);
-    console.log(JSON.stringify(route.params.filteredForecastWeather));
-
-    // const ins = new WeatherApiClass(
-    //   '-17.40955352783203',
-    //   '14.769736896901634',
-    //   'metric',
-    // );
-    (async () => {
-      try {
-        // const weather = await ins.getWeather();
-        // const icon = weather.weather[0].icon;
-        // console.log(icon);
-        // console.log(route.params.weather);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-
-    AppState.addEventListener('focus', _handleAppStateChange);
+    firstMount.current = true;
+    isMounted.current = true;
 
     return () => {
-      AppState.removeEventListener('focus', _handleAppStateChange);
+      firstMount.current = false;
+      isMounted.current = false;
     };
   }, []);
+
+  useEffect(() => {
+    // console.log("From MorningScreen")
+    // console.log(weatherData)
+    if (isMounted.current) {
+      if (firstMount.current) {
+        firstMount.current = false;
+        // return setForegroundState({state: false});
+        return;
+      }
+
+      if (firstMount.current === false && foregroundState.state === true) {
+        updateWeather();
+        if (isMounted.current) {
+          setForegroundState({state: false});
+        }
+      }
+    }
+  });
 
   return (
     <>
@@ -158,15 +162,22 @@ export default function MorningScreen({route, navigation}: any) {
         <View style={styles.locationContainer}>
           <MapIcon fill={enums.Colors.blue} height={'25'} />
           <Text style={styles.locationText}>
-            {weather?.name},{weather?.sys.country}
+
+            {
+            weatherAndForecastData ? 
+            weatherAndForecastData.weatherData.name+ "," +weatherAndForecastData.weatherData.sys.country : null }
           </Text>
         </View>
 
         <View style={styles.iconContainer}>
           <IconExchanger
-            name={weather.weather[0].icon}
+            name={
+              weatherAndForecastData
+                ? weatherAndForecastData.weatherData.weather[0].icon
+                : '01n'
+            }
             dayColor={enums.Colors.blue}
-            nightColor={'orange'}
+            nightColor={enums.Colors.blue}
             height={'100%'}
           />
         </View>
@@ -185,7 +196,9 @@ export default function MorningScreen({route, navigation}: any) {
                 fontFamily: enums.Fonts.bold,
                 fontSize: 16,
               }}>
-              {weather ? dateIns.getDate(weather.dt).day : null}
+              {weatherAndForecastData
+                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).day
+                : null}
             </Text>
             <Text
               style={{
@@ -193,8 +206,12 @@ export default function MorningScreen({route, navigation}: any) {
                 fontFamily: enums.Fonts.regular,
                 fontSize: 16,
               }}>
-              {weather ? dateIns.getDate(weather.dt).month : null}{' '}
-              {weather ? dateIns.getDate(weather.dt).dayNum : null}
+              {weatherAndForecastData
+                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).month
+                : null}{' '}
+              {weatherAndForecastData
+                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).dayNum
+                : null}
             </Text>
           </View>
           {/* Separator */}
@@ -217,7 +234,7 @@ export default function MorningScreen({route, navigation}: any) {
                   fontFamily: enums.Fonts.extraBold,
                   fontSize: 32,
                 }}>
-                {weather ? Math.trunc(weather.main.temp) + '°' : null}
+                {weatherAndForecastData ? Math.trunc(weatherAndForecastData.weatherData.main.temp) + '°' : null}
               </Text>
               <Text
                 style={{
@@ -235,8 +252,8 @@ export default function MorningScreen({route, navigation}: any) {
                 marginTop: -6,
               }}>
               around{' '}
-              {filteredForecast
-                ? Math.trunc(filteredForecast.tonight.temp)
+              {weatherAndForecastData
+                ? Math.trunc(weatherAndForecastData.filteredForecast.tonight.temp)
                 : null}
               ° to night
             </Text>
@@ -260,45 +277,50 @@ export default function MorningScreen({route, navigation}: any) {
             marginTop: 10,
           }}>
           <View style={{flexDirection: 'column'}}>
-            <ForecastOneDay
-              style={forecastDayStyle}
-              epochTime={filteredForecast.morningFirst.date}
-              morningData={{
-                temp: filteredForecast.morningFirst.temp,
-                name: filteredForecast.morningFirst.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.white,
-                height: '35',
-              }}
-              afternoonData={{
-                temp: filteredForecast.afternoonFirst.temp,
-                name: filteredForecast.afternoonFirst.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.blue,
-                height: '35',
-              }}
-            />
+            {weatherAndForecastData ? (
+              <ForecastOneDay
+                style={forecastDayStyle}
+                epochTime={weatherAndForecastData.filteredForecast.morningFirst.date}
+                morningData={{
+                  temp: weatherAndForecastData.filteredForecast.morningFirst.temp,
+                  name: weatherAndForecastData.filteredForecast.morningFirst.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+                afternoonData={{
+                  temp: weatherAndForecastData.filteredForecast.afternoonFirst.temp,
+                  name: weatherAndForecastData.filteredForecast.afternoonFirst.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+              />
+            ) : null}
+            <Text>{}</Text>
           </View>
 
           <View style={{flexDirection: 'column'}}>
-            <ForecastOneDay
-              style={forecastDayStyle}
-              epochTime={filteredForecast.morningDayAfter.date}
-              morningData={{
-                temp: filteredForecast.morningDayAfter.temp,
-                name: filteredForecast.morningDayAfter.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.white,
-                height: '35',
-              }}
-              afternoonData={{
-                temp: filteredForecast.afternoonDayAfter.temp,
-                name: filteredForecast.afternoonDayAfter.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.blue,
-                height: '35',
-              }}
-            />
+            {weatherAndForecastData ? (
+              <ForecastOneDay
+                style={forecastDayStyle}
+                epochTime={weatherAndForecastData.filteredForecast.morningDayAfter.date}
+                morningData={{
+                  temp: weatherAndForecastData.filteredForecast.morningDayAfter.temp,
+                  name: weatherAndForecastData.filteredForecast.morningDayAfter.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+                afternoonData={{
+                  temp: weatherAndForecastData.filteredForecast.afternoonDayAfter.temp,
+                  name: weatherAndForecastData.filteredForecast.afternoonDayAfter.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+              />
+            ) : null}
           </View>
         </View>
 
@@ -309,45 +331,49 @@ export default function MorningScreen({route, navigation}: any) {
             marginTop: 30,
           }}>
           <View style={{flexDirection: 'column'}}>
-            <ForecastOneDay
-              style={forecastDayStyle}
-              epochTime={filteredForecast.morningThirdDay.date}
-              morningData={{
-                temp: filteredForecast.morningThirdDay.temp,
-                name: filteredForecast.morningThirdDay.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.white,
-                height: '35',
-              }}
-              afternoonData={{
-                temp: filteredForecast.afternoonThirdDay.temp,
-                name: filteredForecast.afternoonThirdDay.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.blue,
-                height: '35',
-              }}
-            />
+            {weatherAndForecastData ? (
+              <ForecastOneDay
+                style={forecastDayStyle}
+                epochTime={weatherAndForecastData.filteredForecast.morningThirdDay.date}
+                morningData={{
+                  temp: weatherAndForecastData.filteredForecast.morningThirdDay.temp,
+                  name: weatherAndForecastData.filteredForecast.morningThirdDay.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+                afternoonData={{
+                  temp: weatherAndForecastData.filteredForecast.afternoonThirdDay.temp,
+                  name: weatherAndForecastData.filteredForecast.afternoonThirdDay.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+              />
+            ) : null}
           </View>
 
           <View style={{flexDirection: 'column'}}>
-            <ForecastOneDay
-              style={forecastDayStyle}
-              epochTime={filteredForecast.morningFourthDay.date}
-              morningData={{
-                temp: filteredForecast.morningFourthDay.temp,
-                name: filteredForecast.morningFourthDay.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.white,
-                height: '35',
-              }}
-              afternoonData={{
-                temp: filteredForecast.afternoonFourthDay.temp,
-                name: filteredForecast.afternoonFourthDay.icon,
-                dayColor: enums.Colors.blue,
-                nightColor: enums.Colors.blue,
-                height: '35',
-              }}
-            />
+            {weatherAndForecastData ? (
+              <ForecastOneDay
+                style={forecastDayStyle}
+                epochTime={weatherAndForecastData.filteredForecast.morningFourthDay.date}
+                morningData={{
+                  temp: weatherAndForecastData.filteredForecast.morningFourthDay.temp,
+                  name: weatherAndForecastData.filteredForecast.morningFourthDay.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+                afternoonData={{
+                  temp: weatherAndForecastData.filteredForecast.afternoonFourthDay.temp,
+                  name: weatherAndForecastData.filteredForecast.afternoonFourthDay.icon,
+                  dayColor: enums.Colors.blue,
+                  nightColor: enums.Colors.blue,
+                  height: '35',
+                }}
+              />
+            ) : null}
           </View>
         </View>
       </ScrollView>

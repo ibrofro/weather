@@ -1,9 +1,11 @@
 import {credentials} from '../enums';
+import add from 'date-fns/add';
 import {
   weatherResponseType,
   forecastWeatherType,
   filteredForecastWeatherType,
   forecastItemType,
+  currentAndForecastType,
 } from '../types';
 export default class WeatherApiClass {
   lon: string;
@@ -26,7 +28,7 @@ export default class WeatherApiClass {
       credentials.openWeather +
       '&units=' +
       this.unit;
-    console.log(url);
+    // console.log(url);
     const res = await fetch(url);
     if (res.ok) {
       const jsonRes = await res.json();
@@ -49,7 +51,7 @@ export default class WeatherApiClass {
       credentials.openWeather +
       '&units=' +
       this.unit;
-    console.log(url);
+    // console.log(url);
     const res = await fetch(url);
     if (res.ok) {
       const jsonRes = await res.json();
@@ -62,6 +64,30 @@ export default class WeatherApiClass {
     }
   }
 
+  getWeatherAndForecastData = async () => {
+    const getData = async (): Promise<currentAndForecastType> => {
+      const url =
+      'https://api.openweathermap.org/data/2.5/onecall?' +
+      "exclude=hourly,minutely,alerts"
+      '&lat=' +
+      this.lat +
+      '&lon=' +
+      this.lon +
+      '&appid=' +
+      credentials.openWeather +
+      '&units=' +
+      this.unit;
+      const req = await fetch(url);
+      if (req.ok) {
+        const res = await req.json();
+        const transformedRes = res as currentAndForecastType;
+        console.log(transformedRes);
+        return transformedRes;
+      } else {
+        throw new Error('This is hilarious');
+      }
+    };
+  };
   filterForecastData(data: forecastWeatherType): filteredForecastWeatherType {
     // The first date returned by the API.
     const initialEpoch = data.list[0].dt;
@@ -75,25 +101,28 @@ export default class WeatherApiClass {
     let nmonth = month < 10 ? `0${month}` : `${month}`;
     const year = d.getFullYear();
     const nineHours = 32400;
-    const nineteenHours = 75600;
+    const twentyOneHours = 75600;
     const tomorrow = new Date(`${year}-${nmonth}-${date}T00:00:00`);
-    const dayAfter = new Date(`${year}-${nmonth}-${date + 1}T00:00:00`);
-    const thirdDay = new Date(`${year}-${nmonth}-${date + 2}T00:00:00`);
-    const fourthDay = new Date(`${year}-${nmonth}-${date + 3}T00:00:00`);
+    // const dayAfter = new Date(`${year}-${nmonth}-${date + 1}T00:00:00`);
+    const dayAfter = add(tomorrow, {days: 1});
+    // const thirdDay = new Date(`${year}-${nmonth}-${date + 2}T00:00:00`);
+    const thirdDay = add(dayAfter, {days: 1});
+    // const fourthDay = new Date(`${year}-${nmonth}-${date + 3}T00:00:00`);
+    const fourthDay = add(thirdDay, {days: 1});
     const epochTomorrow = tomorrow.getTime() / 1000;
     const epochDayAfter = dayAfter.getTime() / 1000;
     const epochThirdDay = thirdDay.getTime() / 1000;
     const epochFourthDay = fourthDay.getTime() / 1000;
 
     let tonight = 0;
-    let morningFirst:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let afternoonFirst:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let morningDayAfter:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let afternoonDayAfter:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let morningThirdDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let afternoonThirdDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let morningFourthDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
-    let afternoonFourthDay:forecastItemType= {date: 0 ,temp: 0,icon: ""};
+    let morningFirst: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let afternoonFirst: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let morningDayAfter: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let afternoonDayAfter: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let morningThirdDay: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let afternoonThirdDay: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let morningFourthDay: forecastItemType = {date: 0, temp: 0, icon: ''};
+    let afternoonFourthDay: forecastItemType = {date: 0, temp: 0, icon: ''};
 
     for (let i = 0; i < data.list.length; i++) {
       const d = data.list[i];
@@ -109,7 +138,7 @@ export default class WeatherApiClass {
         };
         morningFirst = morning;
       }
-      if (data.list[i].dt === epochTomorrow + nineteenHours) {
+      if (data.list[i].dt === epochTomorrow + twentyOneHours) {
         let afternoon: forecastItemType = {
           date: d.dt,
           temp: d.main.temp,
@@ -127,7 +156,7 @@ export default class WeatherApiClass {
         morningDayAfter = morning;
       }
 
-      if (data.list[i].dt === epochDayAfter + nineteenHours) {
+      if (data.list[i].dt === epochDayAfter + twentyOneHours) {
         let afternoon: forecastItemType = {
           date: d.dt,
           temp: d.main.temp,
@@ -145,7 +174,7 @@ export default class WeatherApiClass {
         morningThirdDay = morning;
       }
 
-      if (data.list[i].dt === epochThirdDay + nineteenHours) {
+      if (data.list[i].dt === epochThirdDay + twentyOneHours) {
         let afternoon: forecastItemType = {
           date: d.dt,
           temp: d.main.temp,
@@ -163,7 +192,7 @@ export default class WeatherApiClass {
         morningFourthDay = morning;
       }
 
-      if (data.list[i].dt === epochFourthDay + nineteenHours) {
+      if (data.list[i].dt === epochFourthDay + twentyOneHours) {
         let afternoon: forecastItemType = {
           date: d.dt,
           temp: d.main.temp,

@@ -1,17 +1,17 @@
 import {StyleSheet} from 'react-native';
 import * as enums from '../enums';
 
-export const forecastDayStyle = StyleSheet.create({
+export const forecastEveningStyle = StyleSheet.create({
   dayStyle: {
-    color: enums.Colors.blue,
+    color: enums.Colors.white,
     fontFamily: enums.Fonts.extraBold,
     fontSize: 18,
   },
   morningStyle: {
-    color: enums.Colors.blue,
+    color: enums.Colors.white,
   },
   afternoonStyle: {
-    color: enums.Colors.blue,
+    color: enums.Colors.white,
   },
   widgetContainer: {
     padding: 10,

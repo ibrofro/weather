@@ -31,7 +31,7 @@ export default function ForecastOneDay(props: {
         <View style={{marginBottom: 2}}>
           <Text style={props.style.dayStyle}>{dateIns.day}</Text>
         </View>
-        <Text>Morning</Text>
+        <Text style={props.style.morningStyle}>Morning</Text>
         <View style={props.style.widgetContainer}>
           <View style={props.style.iconExchangerContainer}>
             <IconExchanger
@@ -51,7 +51,7 @@ export default function ForecastOneDay(props: {
       </View>
 
       <View style={{marginTop: 5}}>
-        <Text>Afternoon</Text>
+        <Text style={props.style.afternoonStyle}>Afternoon</Text>
         <View style={props.style.widgetContainer}>
           <View style={props.style.iconExchangerContainer}>
             <IconExchanger
