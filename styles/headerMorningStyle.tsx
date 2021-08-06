@@ -40,7 +40,7 @@ export const headerMorningStyle = StyleSheet.create({
 export const statusBarOption = {
   backgroundColor: enums.Colors.darkerOrange,
 };
-export const svgParams = {
+export const svgParamsHeaderMorning = {
   hamburgerSvg: {
     fill: enums.Colors.white,
     height: 30,

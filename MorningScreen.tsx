@@ -6,6 +6,8 @@ import MapIcon from './assets/icons/map.svg';
 import * as Location from 'expo-location';
 import * as enums from './enums';
 import Header from './components/Header';
+import Suggestion from './components/Suggestion';
+
 import {
   weatherResponseType,
   forecastWeatherType,
@@ -15,7 +17,12 @@ import TimeClass from './classes/TimeClass';
 import ForecastOneDay from './components/ForecastOneDay';
 import {forecastDayStyle} from './styles/forecastStyle';
 import {connState} from './App';
-import {headerMorningStyle,statusBarOption,svgParams} from './styles/headerMorningStyle';
+import {
+  headerMorningStyle,
+  statusBarOption,
+  svgParamsHeaderMorning,
+} from './styles/headerMorningStyle';
+import {suggestionMorningStyle,svgParamsSuggestionMorning} from "./styles/suggestionMorningStyle"
 export default function MorningScreen({route, navigation}: any) {
   let {
     foregroundState,
@@ -147,9 +154,11 @@ export default function MorningScreen({route, navigation}: any) {
     <>
       <Header
         styles={headerMorningStyle}
-        svgParams={svgParams}
+        svgParams={svgParamsHeaderMorning}
         statusBarOption={statusBarOption}
       />
+      <Suggestion style={suggestionMorningStyle} svgParams={svgParamsSuggestionMorning}/>
+     
       {error ? (
         <View
           style={{
@@ -424,6 +433,8 @@ const styles = StyleSheet.create({
     backgroundColor: enums.Colors.white,
   },
   contentContainerStyle: {
+    // zIndex:1
+    // position:"absolute",
     padding: 30,
     paddingBottom: 200,
   },

@@ -10,4 +10,4 @@ import Test3 from "./test/Test3"
 import Test1 from "./test/Test1"
 import Test8 from "./test/Test8"
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => Test1);

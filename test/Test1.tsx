@@ -1,38 +1,27 @@
 import React, {useEffect, useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View, AppState} from 'react-native';
+import cities from 'cities.json';
+export default function Test1() {
 
-export default function Test1({navigation}: any) {
-//   const currentState = useRef(AppState.currentState);
-//   function handleChange(nextState: any) {
-//     console.log('----------Test1----------');
-//     console.log('previousState: ' + currentState.current);
-//     console.log('nextState: ' + nextState);
-//   }
-//   useEffect(() => {
-//     AppState.addEventListener('change', handleChange);
-
-//     return () => {
-//       AppState.addEventListener('change', handleChange);
-//     };
-//   }, []);
-
+useEffect(()=>{
+  console.log(cities)
+})
   return (
+    <>
     <View style={styles.container}>
-      <Text>This is Test1</Text>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('Test2');
-        }}>
-        <Text>Navigate to test2</Text>
-      </TouchableOpacity>
+     <Text>kksdfsdf</Text>
     </View>
+  </>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 10,
+    backgroundColor: 'gray',
+    width: "80%",
+    // alignSelf:"flex-start",
+    height: 60,
+    // position:"relative"
   },
 });
