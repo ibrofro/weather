@@ -5,6 +5,7 @@ import IconExchanger from './components/IconExchanger';
 import MapIcon from './assets/icons/map.svg';
 import * as Location from 'expo-location';
 import * as enums from './enums';
+import Header from './components/Header';
 import {
   weatherResponseType,
   forecastWeatherType,
@@ -78,7 +79,7 @@ export default function EveningScreen({route, navigation}: any) {
             String(latitude),
             'metric',
           );
-          
+
           // Get the weather data.
           const weather = await ins.getWeather();
           const icon = weather.weather[0].icon;
@@ -90,15 +91,15 @@ export default function EveningScreen({route, navigation}: any) {
 
           // Stay or go to evening screen
           // with weather data.
-          console.log("Evening stuff")
+          console.log('Evening stuff');
           if (icon.indexOf('n') !== -1) {
-              setWeather(weather);
-              setFilteredForecast(filteredForecastWeather);
-            } else {
-              navigation.navigate('Morning', {
-                weather: weather,
-                filteredForecastWeather: filteredForecastWeather,
-              });
+            setWeather(weather);
+            setFilteredForecast(filteredForecastWeather);
+          } else {
+            navigation.navigate('Morning', {
+              weather: weather,
+              filteredForecastWeather: filteredForecastWeather,
+            });
           }
         } catch (error) {
           console.log(error);
@@ -166,7 +167,7 @@ export default function EveningScreen({route, navigation}: any) {
         <View style={styles.iconContainer}>
           <IconExchanger
             // name={weather.weather[0].icon}
-            name={"02n"}
+            name={'02n'}
             dayColor={enums.Colors.blue}
             nightColor={enums.Colors.white}
             height={'100%'}
@@ -235,7 +236,7 @@ export default function EveningScreen({route, navigation}: any) {
                 fontFamily: enums.Fonts.regular,
                 fontSize: 16,
                 marginTop: -6,
-                color:enums.Colors.white
+                color: enums.Colors.white,
               }}>
               around{' '}
               {filteredForecast
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontFamily: enums.Fonts.bold,
     fontSize: 16,
-    color:enums.Colors.white,
+    color: enums.Colors.white,
   },
   iconContainer: {
     alignItems: 'center',

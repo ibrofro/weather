@@ -1,7 +1,10 @@
 export enum Colors {
   blue = '#313745',
   white = '#FFFFFF',
-  gray = "#E7E7E7"
+  gray = "#ECECEC",
+  darkerGray = "#9C9C9C",
+  orange = "orange" ,
+  darkerOrange = "#E39411"
 }
 
 export enum Fonts{

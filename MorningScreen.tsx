@@ -5,6 +5,7 @@ import IconExchanger from './components/IconExchanger';
 import MapIcon from './assets/icons/map.svg';
 import * as Location from 'expo-location';
 import * as enums from './enums';
+import Header from './components/Header';
 import {
   weatherResponseType,
   forecastWeatherType,
@@ -14,7 +15,7 @@ import TimeClass from './classes/TimeClass';
 import ForecastOneDay from './components/ForecastOneDay';
 import {forecastDayStyle} from './styles/forecastStyle';
 import {connState} from './App';
-
+import {headerMorningStyle,statusBarOption,svgParams} from './styles/headerMorningStyle';
 export default function MorningScreen({route, navigation}: any) {
   let {
     foregroundState,
@@ -144,6 +145,11 @@ export default function MorningScreen({route, navigation}: any) {
 
   return (
     <>
+      <Header
+        styles={headerMorningStyle}
+        svgParams={svgParams}
+        statusBarOption={statusBarOption}
+      />
       {error ? (
         <View
           style={{
@@ -162,10 +168,11 @@ export default function MorningScreen({route, navigation}: any) {
         <View style={styles.locationContainer}>
           <MapIcon fill={enums.Colors.blue} height={'25'} />
           <Text style={styles.locationText}>
-
-            {
-            weatherAndForecastData ? 
-            weatherAndForecastData.weatherData.name+ "," +weatherAndForecastData.weatherData.sys.country : null }
+            {weatherAndForecastData
+              ? weatherAndForecastData.weatherData.name +
+                ',' +
+                weatherAndForecastData.weatherData.sys.country
+              : null}
           </Text>
         </View>
 
@@ -234,7 +241,10 @@ export default function MorningScreen({route, navigation}: any) {
                   fontFamily: enums.Fonts.extraBold,
                   fontSize: 32,
                 }}>
-                {weatherAndForecastData ? Math.trunc(weatherAndForecastData.weatherData.main.temp) + '°' : null}
+                {weatherAndForecastData
+                  ? Math.trunc(weatherAndForecastData.weatherData.main.temp) +
+                    '°'
+                  : null}
               </Text>
               <Text
                 style={{
@@ -253,7 +263,9 @@ export default function MorningScreen({route, navigation}: any) {
               }}>
               around{' '}
               {weatherAndForecastData
-                ? Math.trunc(weatherAndForecastData.filteredForecast.tonight.temp)
+                ? Math.trunc(
+                    weatherAndForecastData.filteredForecast.tonight.temp,
+                  )
                 : null}
               ° to night
             </Text>
@@ -280,17 +292,23 @@ export default function MorningScreen({route, navigation}: any) {
             {weatherAndForecastData ? (
               <ForecastOneDay
                 style={forecastDayStyle}
-                epochTime={weatherAndForecastData.filteredForecast.morningFirst.date}
+                epochTime={
+                  weatherAndForecastData.filteredForecast.morningFirst.date
+                }
                 morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningFirst.temp,
-                  name: weatherAndForecastData.filteredForecast.morningFirst.icon,
+                  temp: weatherAndForecastData.filteredForecast.morningFirst
+                    .temp,
+                  name: weatherAndForecastData.filteredForecast.morningFirst
+                    .icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
                 }}
                 afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast.afternoonFirst.temp,
-                  name: weatherAndForecastData.filteredForecast.afternoonFirst.icon,
+                  temp: weatherAndForecastData.filteredForecast.afternoonFirst
+                    .temp,
+                  name: weatherAndForecastData.filteredForecast.afternoonFirst
+                    .icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
@@ -304,17 +322,23 @@ export default function MorningScreen({route, navigation}: any) {
             {weatherAndForecastData ? (
               <ForecastOneDay
                 style={forecastDayStyle}
-                epochTime={weatherAndForecastData.filteredForecast.morningDayAfter.date}
+                epochTime={
+                  weatherAndForecastData.filteredForecast.morningDayAfter.date
+                }
                 morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningDayAfter.temp,
-                  name: weatherAndForecastData.filteredForecast.morningDayAfter.icon,
+                  temp: weatherAndForecastData.filteredForecast.morningDayAfter
+                    .temp,
+                  name: weatherAndForecastData.filteredForecast.morningDayAfter
+                    .icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
                 }}
                 afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast.afternoonDayAfter.temp,
-                  name: weatherAndForecastData.filteredForecast.afternoonDayAfter.icon,
+                  temp: weatherAndForecastData.filteredForecast
+                    .afternoonDayAfter.temp,
+                  name: weatherAndForecastData.filteredForecast
+                    .afternoonDayAfter.icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
@@ -334,17 +358,23 @@ export default function MorningScreen({route, navigation}: any) {
             {weatherAndForecastData ? (
               <ForecastOneDay
                 style={forecastDayStyle}
-                epochTime={weatherAndForecastData.filteredForecast.morningThirdDay.date}
+                epochTime={
+                  weatherAndForecastData.filteredForecast.morningThirdDay.date
+                }
                 morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningThirdDay.temp,
-                  name: weatherAndForecastData.filteredForecast.morningThirdDay.icon,
+                  temp: weatherAndForecastData.filteredForecast.morningThirdDay
+                    .temp,
+                  name: weatherAndForecastData.filteredForecast.morningThirdDay
+                    .icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
                 }}
                 afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast.afternoonThirdDay.temp,
-                  name: weatherAndForecastData.filteredForecast.afternoonThirdDay.icon,
+                  temp: weatherAndForecastData.filteredForecast
+                    .afternoonThirdDay.temp,
+                  name: weatherAndForecastData.filteredForecast
+                    .afternoonThirdDay.icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
@@ -357,17 +387,23 @@ export default function MorningScreen({route, navigation}: any) {
             {weatherAndForecastData ? (
               <ForecastOneDay
                 style={forecastDayStyle}
-                epochTime={weatherAndForecastData.filteredForecast.morningFourthDay.date}
+                epochTime={
+                  weatherAndForecastData.filteredForecast.morningFourthDay.date
+                }
                 morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningFourthDay.temp,
-                  name: weatherAndForecastData.filteredForecast.morningFourthDay.icon,
+                  temp: weatherAndForecastData.filteredForecast.morningFourthDay
+                    .temp,
+                  name: weatherAndForecastData.filteredForecast.morningFourthDay
+                    .icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
                 }}
                 afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast.afternoonFourthDay.temp,
-                  name: weatherAndForecastData.filteredForecast.afternoonFourthDay.icon,
+                  temp: weatherAndForecastData.filteredForecast
+                    .afternoonFourthDay.temp,
+                  name: weatherAndForecastData.filteredForecast
+                    .afternoonFourthDay.icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
