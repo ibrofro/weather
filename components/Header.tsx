@@ -6,6 +6,8 @@ export default function Header(props: {
   styles: any;
   svgParams: any;
   statusBarOption: any;
+  searchString: string | null;
+  setSearchString: Function;
 }) {
   return (
     <>
@@ -29,12 +31,14 @@ export default function Header(props: {
           <View style={props.styles.inputContainer}>
             <TextInput
               style={props.styles.searchStyle}
+              onChangeText={text => {
+                props.setSearchString(text);
+              }}
               placeholder="Search by country or city"
             />
           </View>
         </View>
       </View>
-      
     </>
   );
 }

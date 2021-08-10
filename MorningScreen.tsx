@@ -22,7 +22,10 @@ import {
   statusBarOption,
   svgParamsHeaderMorning,
 } from './styles/headerMorningStyle';
-import {suggestionMorningStyle,svgParamsSuggestionMorning} from "./styles/suggestionMorningStyle"
+import {
+  suggestionMorningStyle,
+  svgParamsSuggestionMorning,
+} from './styles/suggestionMorningStyle';
 export default function MorningScreen({route, navigation}: any) {
   let {
     foregroundState,
@@ -37,7 +40,7 @@ export default function MorningScreen({route, navigation}: any) {
 
   const firstMount = useRef(false);
   const isMounted = useRef(false);
-
+  const [searchString, setSearchString] = useState<string | null>(null);
   // const [weather, setWeather] = useState<weatherResponseType>(
   //   route.params.weather,
   // );
@@ -134,20 +137,22 @@ export default function MorningScreen({route, navigation}: any) {
   useEffect(() => {
     // console.log("From MorningScreen")
     // console.log(weatherData)
-    if (isMounted.current) {
-      if (firstMount.current) {
-        firstMount.current = false;
-        // return setForegroundState({state: false});
-        return;
-      }
+    // if (isMounted.current) {
+    //   if (firstMount.current) {
+    //     firstMount.current = false;
+    //     // return setForegroundState({state: false});
+    //     return;
+    //   }
 
-      if (firstMount.current === false && foregroundState.state === true) {
-        updateWeather();
-        if (isMounted.current) {
-          setForegroundState({state: false});
-        }
-      }
-    }
+    //   if (firstMount.current === false && foregroundState.state === true) {
+    //     updateWeather();
+    //     if (isMounted.current) {
+    //       setForegroundState({state: false});
+    //     }
+    //   }
+    // }
+
+    console.log(searchString);
   });
 
   return (
@@ -156,9 +161,18 @@ export default function MorningScreen({route, navigation}: any) {
         styles={headerMorningStyle}
         svgParams={svgParamsHeaderMorning}
         statusBarOption={statusBarOption}
+        searchString={searchString}
+        setSearchString={setSearchString}
       />
-      <Suggestion style={suggestionMorningStyle} svgParams={svgParamsSuggestionMorning}/>
-     
+      {console.log("typeOF => " + typeof(searchString))}
+      {searchString ? (
+        <Suggestion
+          style={suggestionMorningStyle}
+          svgParams={svgParamsSuggestionMorning}
+          searchString={searchString}
+        />
+      ) : null}
+
       {error ? (
         <View
           style={{

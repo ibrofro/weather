@@ -21,71 +21,40 @@ export const suggestionMorningStyle = StyleSheet.create({
   iconAndTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop:10
+    marginTop: 10,
+  },
+  suggestionContainer: {
+    padding: 4,
+  },
+  locationIconContainer:{
+    marginLeft:10
+  },
+  countryText: {
+    fontFamily: enums.Fonts.bold,
+    fontSize: 16,
+    marginLeft: 5,
+    marginTop:5,
+    color: 'white',
   },
   suggestionText: {
-    fontFamily: enums.Fonts.bold,
-    fontSize: 14,
+    fontFamily: enums.Fonts.regular,
+    fontSize: 16,
     marginLeft: 5,
     color: 'white',
   },
   separator: {
     marginTop: 20,
-    position:'relative',
-    left:-20,
+    position: 'relative',
+    left: -20,
     height: 2,
     width: '70%',
     backgroundColor: 'white',
   },
-
-  //   headerContainer: {
-  //     backgroundColor: 'orange',
-  //     flexDirection: 'row',
-  //     alignItems: 'center',
-  //     padding: 15,
-  //     paddingLeft: 20,
-  //     paddingRight: 20,
-  //     height: 70,
-  //   },
-  //   hamburgerMenuContainer: {
-  //     alignItems: 'center',
-  //   },
-  //   searchStyle: {
-  //     backgroundColor: enums.Colors.white,
-
-  //     borderTopRightRadius: 5,
-  //     borderBottomRightRadius: 5,
-  //   },
-  //   searchContainer: {
-  //     width: '65%',
-  //     flexDirection: 'row',
-  //     marginLeft: 15,
-  //   },
-
-  //   searchIconContainer: {
-  //     backgroundColor: enums.Colors.white,
-  //     padding: 8,
-  //     borderRightColor: enums.Colors.darkerGray,
-  //     borderRightWidth: 1,
-  //     borderTopLeftRadius: 5,
-  //     borderBottomLeftRadius: 5,
-  //     alignItems: 'center',
-  //     justifyContent: 'center',
-  //   },
-  // });
-  // export const statusBarOption = {
-  //   backgroundColor: enums.Colors.darkerOrange,
-  // };
 });
 export const svgParamsSuggestionMorning = {
   mapIconSvg: {
     fill: enums.Colors.white,
-    height: 25,
-    width: 25,
+    height: 15,
+    width: 15,
   },
-  // searchSvg: {
-  //   fill: enums.Colors.darkerGray,
-  //   height: 20,
-  //   width: 20,
-  // },
 };
