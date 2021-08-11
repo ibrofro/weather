@@ -4,14 +4,19 @@ import * as enums from '../enums';
 export const suggestionMorningStyle = StyleSheet.create({
   container: {
     marginTop: 10,
-    width: 210,
+    width: '80%',
     borderRadius: 5,
     padding: 10,
     paddingTop: 0,
     paddingBottom: 0,
-    marginLeft: 60,
+    alignSelf: 'center',
+
     maxHeight: 200,
     backgroundColor: enums.Colors.orange,
+  },
+  waitingStatusContainer: {},
+  waitingStatusText: {
+    color: 'red',
   },
   itemContainer: {
     marginTop: 12,
@@ -26,14 +31,14 @@ export const suggestionMorningStyle = StyleSheet.create({
   suggestionContainer: {
     padding: 4,
   },
-  locationIconContainer:{
-    marginLeft:10
+  locationIconContainer: {
+    marginLeft: 10,
   },
   countryText: {
     fontFamily: enums.Fonts.bold,
     fontSize: 16,
     marginLeft: 5,
-    marginTop:5,
+    marginTop: 5,
     color: 'white',
   },
   suggestionText: {

@@ -34,7 +34,7 @@ export default function Header(props: {
               onChangeText={text => {
                 props.setSearchString(text);
               }}
-              placeholder="Search by country or city"
+              placeholder="City name ex:London "
             />
           </View>
         </View>

@@ -41,6 +41,7 @@ export default function MorningScreen({route, navigation}: any) {
   const firstMount = useRef(false);
   const isMounted = useRef(false);
   const [searchString, setSearchString] = useState<string | null>(null);
+
   // const [weather, setWeather] = useState<weatherResponseType>(
   //   route.params.weather,
   // );
@@ -143,7 +144,6 @@ export default function MorningScreen({route, navigation}: any) {
     //     // return setForegroundState({state: false});
     //     return;
     //   }
-
     //   if (firstMount.current === false && foregroundState.state === true) {
     //     updateWeather();
     //     if (isMounted.current) {
@@ -151,8 +151,7 @@ export default function MorningScreen({route, navigation}: any) {
     //     }
     //   }
     // }
-
-    console.log(searchString);
+    // console.log(searchString);
   });
 
   return (
@@ -164,13 +163,16 @@ export default function MorningScreen({route, navigation}: any) {
         searchString={searchString}
         setSearchString={setSearchString}
       />
-      {console.log("typeOF => " + typeof(searchString))}
+      {console.log('typeOF => ' + typeof searchString)}
+
       {searchString ? (
-        <Suggestion
-          style={suggestionMorningStyle}
-          svgParams={svgParamsSuggestionMorning}
-          searchString={searchString}
-        />
+        <View style={{backgroundColor: 'white'}}>
+          <Suggestion
+            style={suggestionMorningStyle}
+            svgParams={svgParamsSuggestionMorning}
+            searchString={searchString}
+          />
+        </View>
       ) : null}
 
       {error ? (
