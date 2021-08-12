@@ -2,11 +2,15 @@ import React, {useEffect, useReducer, useRef, useState} from 'react';
 import {AppState} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import LoadingScreen from './LoadingScreen';
 import LoginScreen from './LoginScreen';
-import Morning from './MorningScreen';
+import DrawNav from './DrawNav';
 import Evening from './EveningScreen';
 import SplashScreen from './SplashScreen';
+import ProfileScreen from './ProfileScreen';
+import AboutScreen from './AboutScreen';
+import Header from './components/Header';
 import {
   weatherResponseType,
   forecastWeatherType,
@@ -22,8 +26,13 @@ interface contextInterface {
   weatherData: weatherResponseType | undefined;
   setWeatherData: Function;
   filteredForecast: undefined | filteredForecastWeatherType;
-  weatherAndForecastData:{weatherData:weatherResponseType,filteredForecast:filteredForecastWeatherType} | undefined, 
-  setWeatherAndForecastData:Function,
+  weatherAndForecastData:
+    | {
+        weatherData: weatherResponseType;
+        filteredForecast: filteredForecastWeatherType;
+      }
+    | undefined;
+  setWeatherAndForecastData: Function;
   setFilteredForecast: Function;
 }
 interface stateInterface {
@@ -124,18 +133,20 @@ function App() {
         setWeatherData,
         weatherData,
         weatherAndForecastData,
-        setWeatherAndForecastData
+        setWeatherAndForecastData,
       }}>
       <NavigationContainer>
         <Stack.Navigator>
           {state.connectionStatus === 'connected' &&
           weatherAndForecastData &&
           weatherAndForecastData.weatherData.weather[0].icon.indexOf('d') ? (
-            <Stack.Screen
-              name="Morning"
-              options={{headerShown: false}}
-              component={Morning}
-            />
+            <>
+              <Stack.Screen
+                name="DrawNav"
+                options={{headerShown: false}}
+                component={DrawNav}
+              />
+            </>
           ) : null}
           {state.connectionStatus === 'not-connected' ? (
             <Stack.Screen

@@ -3,6 +3,7 @@ import {StyleSheet, Text, View, FlatList, TouchableOpacity} from 'react-native';
 import MapIcon from '../assets/icons/map.svg';
 import countriesJsonFile from '../node_modules/worldcities/data/countries.json';
 import citiesJsonFile from '../node_modules/worldcities/data/cities.json';
+import {useNavigation, DrawerActions} from '@react-navigation/native';
 
 export default function Suggestion(props: {
   style: any;
@@ -24,6 +25,7 @@ export default function Suggestion(props: {
     index: number;
   }[];
   type countryType = {countryCode: string; name: string};
+  const navigation = useNavigation();
 
   const [countryAndRelatedCities, setCountryAndRelatedCities] =
     useState<null | countryAndRelatedCitiesType>(null);
@@ -93,9 +95,11 @@ export default function Suggestion(props: {
       if (citiesJsonFile[i][2] === city) {
         let duplication = false;
         for (let p = 0; p < citiesFounded.length; p++) {
-          console.log(citiesFounded[p].continent)
-          console.log(citiesJsonFile[i][5].split('/')[0])
-          if (citiesJsonFile[i][5].split('/')[0] === citiesFounded[p].continent) {
+          console.log(citiesFounded[p].continent);
+          console.log(citiesJsonFile[i][5].split('/')[0]);
+          if (
+            citiesJsonFile[i][5].split('/')[0] === citiesFounded[p].continent
+          ) {
             duplication = true;
           }
         }
@@ -171,7 +175,13 @@ export default function Suggestion(props: {
     };
   };
   const renderCities = ({item}: itemCityType) => (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('SearchResultScreen', {
+          lon: item.lon,
+          lat: item.lat,
+        });
+      }}>
       <View style={props.style.itemContainer}>
         <View style={props.style.iconAndTextContainer}>
           <View style={props.style.locationIconContainer}>
@@ -232,19 +242,17 @@ export default function Suggestion(props: {
   }, [props.searchString]);
 
   return (
-    <View >
-      
+    <View>
       {cities !== null ? (
         <View style={props.style.container}>
-        <FlatList
-          data={cities}
-          renderItem={renderCities}
-          initialNumToRender={7}
-          keyExtractor={i => i.index.toString()}
-        />
+          <FlatList
+            data={cities}
+            renderItem={renderCities}
+            initialNumToRender={7}
+            keyExtractor={i => i.index.toString()}
+          />
         </View>
       ) : null}
-
     </View>
   );
 }
