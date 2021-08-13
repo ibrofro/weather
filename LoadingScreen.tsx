@@ -98,36 +98,22 @@ export default function LoadingScreen({navigation}: any) {
         try {
           setWhatAreYouDoing('getting-weather-data');
           const ins = new WeatherApiClass(
-            String(longitude),
-            String(latitude),
+            // String(longitude),
+            // String(latitude),
+            "-122.084",
+            "37.4219983",
             'metric',
           );
-          const weather = await ins.getWeather();
-          const icon = weather.weather[0].icon;
-          setWhatAreYouDoing('getting-forecast-data');
-          const rawForecastWeather = await ins.getForecastWeather();
-          let filteredForecastWeather =
-            ins.filterForecastData(rawForecastWeather);
-          // console.log(weather?.weather[0].icon.indexOf('d'));
-          console.log(filteredForecastWeather);
-          // setWeatherData(weather);
-          // setFilteredForecast(filteredForecastWeather);
+          const weatherAndForecastData = await ins.getWeatherAndForecastData();
+          const weather = ins.filterRawToWeatherData(weatherAndForecastData)
+          const filteredForecastWeather = ins.filterRawToForecastData(weatherAndForecastData)
+          console.log(weather)
+          console.log(filteredForecastWeather)
+      
           setWeatherAndForecastData({
             weatherData: weather,
             filteredForecast: filteredForecastWeather,
           });
-          // return false;
-          // if (icon.indexOf('n') !== -1) {
-          // navigation.navigate('Evening', {
-          //   weather: weather,
-          //   filteredForecastWeather: filteredForecastWeather,
-          // });
-          // } else {
-          // navigation.navigate('Morning', {
-          //   weather: weather,
-          //   filteredForecastWeather: filteredForecastWeather,
-          // });
-          // }
         } catch (error) {
           console.log(error);
           setError('Error while getting the weather');

@@ -1,12 +1,17 @@
 import {credentials} from '../enums';
 import add from 'date-fns/add';
+import fromUnixTime from 'date-fns/fromUnixTime';
+import {zonedTimeToUtc, utcToZonedTime, format} from 'date-fns-tz';
+import getUnixTime from 'date-fns/getUnixTime';
 import {
   weatherResponseType,
   forecastWeatherType,
   filteredForecastWeatherType,
   forecastItemType,
   currentAndForecastType,
+  weatherDataFilteredType,
 } from '../types';
+import id from 'date-fns/esm/locale/id/index.js';
 export default class WeatherApiClass {
   lon: string;
   lat: string;
@@ -64,11 +69,10 @@ export default class WeatherApiClass {
     }
   }
 
-  getWeatherAndForecastData = async () => {
-    const getData = async (): Promise<currentAndForecastType> => {
-      const url =
+  getWeatherAndForecastData = async (): Promise<currentAndForecastType> => {
+    const url =
       'https://api.openweathermap.org/data/2.5/onecall?' +
-      "exclude=hourly,minutely,alerts"
+      'exclude=minutely,alerts' +
       '&lat=' +
       this.lat +
       '&lon=' +
@@ -77,142 +81,67 @@ export default class WeatherApiClass {
       credentials.openWeather +
       '&units=' +
       this.unit;
-      const req = await fetch(url);
-      if (req.ok) {
-        const res = await req.json();
-        const transformedRes = res as currentAndForecastType;
-        console.log(transformedRes);
-        return transformedRes;
-      } else {
-        throw new Error('This is hilarious');
-      }
-    };
+    const req = await fetch(url);
+    if (req.ok) {
+      const res = await req.json();
+      const transformedRes = res as currentAndForecastType;
+      return transformedRes;
+    } else {
+      throw new Error('Error while getting the weather');
+    }
   };
-  filterForecastData(data: forecastWeatherType): filteredForecastWeatherType {
-    // The first date returned by the API.
-    const initialEpoch = data.list[0].dt;
-    // 01-Jan-1970 00:00:00.
+
+  filterRawToWeatherData(
+    data: currentAndForecastType,
+  ): weatherDataFilteredType {
+    const res: weatherDataFilteredType = {
+      lat: data.lat,
+      lon: data.lon,
+      timezone: data.timezone,
+      timezone_offset: data.timezone_offset,
+      current: data.current,
+      hourly: data.hourly[0],
+    };
+    return res;
+  }
+
+  filterRawToForecastData(
+    data: currentAndForecastType,
+  ): filteredForecastWeatherType {
+    const initialEpoch = data.hourly[0].dt;
     var d = new Date(0);
-    // Get date based on the initial
-    // epoch time from API.
     d.setUTCSeconds(initialEpoch);
     const date = d.getDate() + 1;
     let month = d.getMonth() + 1;
     let nmonth = month < 10 ? `0${month}` : `${month}`;
     const year = d.getFullYear();
-    const nineHours = 32400;
-    const twentyOneHours = 75600;
     const tomorrow = new Date(`${year}-${nmonth}-${date}T00:00:00`);
-    // const dayAfter = new Date(`${year}-${nmonth}-${date + 1}T00:00:00`);
-    const dayAfter = add(tomorrow, {days: 1});
-    // const thirdDay = new Date(`${year}-${nmonth}-${date + 2}T00:00:00`);
-    const thirdDay = add(dayAfter, {days: 1});
-    // const fourthDay = new Date(`${year}-${nmonth}-${date + 3}T00:00:00`);
-    const fourthDay = add(thirdDay, {days: 1});
-    const epochTomorrow = tomorrow.getTime() / 1000;
-    const epochDayAfter = dayAfter.getTime() / 1000;
-    const epochThirdDay = thirdDay.getTime() / 1000;
-    const epochFourthDay = fourthDay.getTime() / 1000;
 
-    let tonight = 0;
-    let morningFirst: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let afternoonFirst: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let morningDayAfter: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let afternoonDayAfter: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let morningThirdDay: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let afternoonThirdDay: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let morningFourthDay: forecastItemType = {date: 0, temp: 0, icon: ''};
-    let afternoonFourthDay: forecastItemType = {date: 0, temp: 0, icon: ''};
+    // console.log(offset)
+    const firstDay = getUnixTime(add(tomorrow, {hours: 20}));
+    const secondDay = getUnixTime(add(tomorrow, {days: 1, hours: 20}));
 
-    for (let i = 0; i < data.list.length; i++) {
-      const d = data.list[i];
+    const thirdDay = getUnixTime(add(tomorrow, {days: 2, hours: 20}));
+    const fourthDay = getUnixTime(add(tomorrow, {days: 3, hours: 20}));
 
-      if (data.list[i].dt === epochTomorrow) {
-        tonight = data.list[i].main.temp;
-      }
-      if (data.list[i].dt === epochTomorrow + nineHours) {
-        let morning: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        morningFirst = morning;
-      }
-      if (data.list[i].dt === epochTomorrow + twentyOneHours) {
-        let afternoon: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        afternoonFirst = afternoon;
-      }
+    const forecast = [];
 
-      if (data.list[i].dt === epochDayAfter + nineHours) {
-        let morning: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        morningDayAfter = morning;
-      }
-
-      if (data.list[i].dt === epochDayAfter + twentyOneHours) {
-        let afternoon: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        afternoonDayAfter = afternoon;
-      }
-
-      if (data.list[i].dt === epochThirdDay + nineHours) {
-        let morning: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        morningThirdDay = morning;
-      }
-
-      if (data.list[i].dt === epochThirdDay + twentyOneHours) {
-        let afternoon: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        afternoonThirdDay = afternoon;
-      }
-
-      if (data.list[i].dt === epochFourthDay + nineHours) {
-        let morning: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        morningFourthDay = morning;
-      }
-
-      if (data.list[i].dt === epochFourthDay + twentyOneHours) {
-        let afternoon: forecastItemType = {
-          date: d.dt,
-          temp: d.main.temp,
-          icon: d.weather[0].icon,
-        };
-        afternoonFourthDay = afternoon;
+    for (let i = 0; i < data.daily.length; i++) {
+      if (data.daily[i].dt === firstDay) {
+        forecast.push(data.daily[i]);
+      } else if (data.daily[i].dt === secondDay) {
+        forecast.push(data.daily[i]);
+      } else if (data.daily[i].dt === thirdDay) {
+        forecast.push(data.daily[i]);
+      } else if (data.daily[i].dt === fourthDay) {
+        forecast.push(data.daily[i]);
       }
     }
-    let arrData: filteredForecastWeatherType = {
-      tonight: {temp: tonight},
-      morningFirst: morningFirst,
-      afternoonFirst: afternoonFirst,
-      morningDayAfter: morningDayAfter,
-      afternoonDayAfter: afternoonDayAfter,
-      morningThirdDay: morningThirdDay,
-      afternoonThirdDay: afternoonThirdDay,
-      morningFourthDay: morningFourthDay,
-      afternoonFourthDay: afternoonFourthDay,
+    return {
+      firstDay: forecast[0],
+      secondDay: forecast[1],
+      thirdDay: forecast[2],
+      fourthDay: forecast[3],
     };
-
-    return arrData;
   }
 }

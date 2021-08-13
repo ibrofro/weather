@@ -15,6 +15,7 @@ import {
   weatherResponseType,
   forecastWeatherType,
   filteredForecastWeatherType,
+  weatherDataFilteredType
 } from './types';
 export const connState = React.createContext({} as contextInterface);
 
@@ -23,17 +24,14 @@ interface contextInterface {
   dispatch: Function;
   foregroundState: {state: boolean};
   setForegroundState: Function;
-  weatherData: weatherResponseType | undefined;
-  setWeatherData: Function;
-  filteredForecast: undefined | filteredForecastWeatherType;
+
   weatherAndForecastData:
     | {
-        weatherData: weatherResponseType;
+        weatherData: weatherDataFilteredType;
         filteredForecast: filteredForecastWeatherType;
       }
     | undefined;
   setWeatherAndForecastData: Function;
-  setFilteredForecast: Function;
 }
 interface stateInterface {
   connectionStatus:
@@ -86,7 +84,7 @@ function App() {
 
   const [weatherAndForecastData, setWeatherAndForecastData] = useState<
     | {
-        weatherData: weatherResponseType;
+        weatherData: weatherDataFilteredType;
         filteredForecast: filteredForecastWeatherType;
       }
     | undefined
@@ -128,18 +126,13 @@ function App() {
         dispatch,
         foregroundState,
         setForegroundState,
-        setFilteredForecast,
-        filteredForecast,
-        setWeatherData,
-        weatherData,
         weatherAndForecastData,
         setWeatherAndForecastData,
       }}>
       <NavigationContainer>
         <Stack.Navigator>
           {state.connectionStatus === 'connected' &&
-          weatherAndForecastData &&
-          weatherAndForecastData.weatherData.weather[0].icon.indexOf('d') ? (
+          weatherAndForecastData ? (
             <>
               <Stack.Screen
                 name="DrawNav"
@@ -148,6 +141,7 @@ function App() {
               />
             </>
           ) : null}
+
           {state.connectionStatus === 'not-connected' ? (
             <Stack.Screen
               name="LoginScreen"
@@ -155,6 +149,7 @@ function App() {
               component={LoginScreen}
             />
           ) : null}
+          
           {state.connectionStatus === 'checking-connection-status' ||
           (state.connectionStatus === 'connected' &&
             weatherAndForecastData == undefined) ? (
@@ -164,69 +159,7 @@ function App() {
               component={LoadingScreen}
             />
           ) : null}
-          {/* {state.connectionStatus === 'checking-connection-status' ? (
-            <Stack.Screen
-              name="SplashScreen"
-              options={{headerShown: false}}
-              component={SplashScreen}
-            />
-          ) : null}
-          {state.connectionStatus === 'not-connected' ? (
-            <Stack.Screen
-              name="LoginScreen"
-              options={{headerShown: false}}
-              component={LoginScreen}
-            />
-          ) : null} */}
-
-          {/* {state.connectionStatus === 'connected' ? (
-          ) : null} */}
-          {/* {state.connected === 'loading' ? (
-            <Stack.Screen
-              name="LoadingScreen"
-              options={{headerShown: false}}
-              component={LoadingScreen}
-            />
-          ) : null}
-          {state.connected === true && weatherData !== undefined ? (
-            <>
-              <Stack.Screen
-                name="LoadingScreen"
-                options={{headerShown: false}}
-                component={LoadingScreen}
-              />
-              
-            </>
-          ) : null}
-
-          {state.connected === true &&
-          weatherData?.weather[0].icon.indexOf('d') !== -1
-           ? (
-            <Stack.Screen
-              name="Morning"
-              options={{headerShown: false}}
-              component={Morning}
-              initialParams={{
-                weatherData: weatherData,
-                filteredForecast: filteredForecast,
-              }}
-            />
-          ) : state.connected === true &&
-            weatherData?.weather[0].icon.indexOf('n')  ? (
-            <Stack.Screen
-              name="Evening"
-              options={{headerShown: false}}
-              component={Evening}
-            />
-          ) : null}
-
-          {state.connected === false ? (
-            <Stack.Screen
-              name="LoginScreen"
-              options={{headerShown: false}}
-              component={LoginScreen}
-            />
-          ) : null} */}
+          
         </Stack.Navigator>
       </NavigationContainer>
     </connState.Provider>

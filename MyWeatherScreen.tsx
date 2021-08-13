@@ -1,13 +1,13 @@
 import React, {useEffect, useState, useContext, useRef} from 'react';
 import {StyleSheet, Text, View, ScrollView, AppState} from 'react-native';
 import WeatherApiClass from './classes/WeatherApiClass';
-import IconExchanger from './components/IconExchanger';
 import MapIcon from './assets/icons/map.svg';
 import * as Location from 'expo-location';
 import * as enums from './enums';
+import IconExchanger from './components/IconExchanger';
+import MoreInfo from './components/MoreInfo';
 import Header from './components/Header';
 import Suggestion from './components/Suggestion';
-
 import {
   weatherResponseType,
   forecastWeatherType,
@@ -27,15 +27,11 @@ import {
   svgParamsSuggestionMorning,
 } from './styles/suggestionMorningStyle';
 
+import {MoreInfoMorningStyle,svgParamsMoreInfoMorning} from './styles/moreInfoMorningStyle';
 export default function MyWeather({route, navigation}: any) {
-
   let {
     foregroundState,
     setForegroundState,
-    weatherData,
-    setWeatherData,
-    filteredForecast,
-    setFilteredForecast,
     weatherAndForecastData,
     setWeatherAndForecastData,
   } = useContext(connState);
@@ -43,12 +39,12 @@ export default function MyWeather({route, navigation}: any) {
   const firstMount = useRef(false);
   const isMounted = useRef(false);
   const [searchString, setSearchString] = useState<string | null>(null);
-  
+
   // const [weather, setWeather] = useState<weatherResponseType>(
   //   route.params.weather,
   // );
   // const [forecastWeather, setForecastWeather] = useState<forecastWeatherType>(
-    //   route.params.forecastWeather,
+  //   route.params.forecastWeather,
   // );
   // const [filteredForecast, setFilteredForecast] =
   //   useState<filteredForecastWeatherType>(route.params.filteredForecastWeather);
@@ -73,58 +69,55 @@ export default function MyWeather({route, navigation}: any) {
   };
 
   const updateWeather = async () => {
-    try {
-      const {granted} = await Location.getForegroundPermissionsAsync();
-      if (granted) {
-        const location = await Location.getCurrentPositionAsync({
-          accuracy: 6,
-        });
-        console.log(location);
-        const longitude = location.coords.longitude;
-        const latitude = location.coords.latitude;
-
-        const ins = new WeatherApiClass(
-          String(longitude),
-          String(latitude),
-          'metric',
-        );
-
-        // Get the weather data.
-        const weather = await ins.getWeather();
-        const icon = weather.weather[0].icon;
-        console.log('weather ==> ' + JSON.stringify(weather));
-        // Get forecast weather
-        const rawForecastWeather = await ins.getForecastWeather();
-        let filteredForecastWeather =
-        ins.filterForecastData(rawForecastWeather);
-
-        // Stay or go to evening screen
-        // with weather data.
-        if (icon.indexOf('n') !== -1) {
-          if (isMounted.current) {
-            navigation.navigate('Evening', {
-              weather: weather,
-              filteredForecastWeather: filteredForecastWeather,
-            });
-          }
-        } else {
-          if (isMounted.current) {
-            setWeatherData(weather);
-            setFilteredForecast(filteredForecastWeather);
-            console.log('Weather updated due to AppState Change...');
-          }
-        }
-      } else {
-        if (isMounted.current) {
-          setError("Can't get your location");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-      if (isMounted.current) {
-        setError('Error while retrieving the weather');
-      }
-    }
+    // try {
+    //   const {granted} = await Location.getForegroundPermissionsAsync();
+    //   if (granted) {
+    //     const location = await Location.getCurrentPositionAsync({
+    //       accuracy: 6,
+    //     });
+    //     console.log(location);
+    //     const longitude = location.coords.longitude;
+    //     const latitude = location.coords.latitude;
+    //     const ins = new WeatherApiClass(
+    //       String(longitude),
+    //       String(latitude),
+    //       'metric',
+    //     );
+    //     // Get the weather data.
+    //     const weather = await ins.getWeather();
+    //     const icon = weather.weather[0].icon;
+    //     console.log('weather ==> ' + JSON.stringify(weather));
+    //     // Get forecast weather
+    //     const rawForecastWeather = await ins.getForecastWeather();
+    //     let filteredForecastWeather =
+    //       ins.filterForecastData(rawForecastWeather);
+    //     // Stay or go to evening screen
+    //     // with weather data.
+    //     if (icon.indexOf('n') !== -1) {
+    //       if (isMounted.current) {
+    //         navigation.navigate('Evening', {
+    //           weather: weather,
+    //           filteredForecastWeather: filteredForecastWeather,
+    //         });
+    //       }
+    //     } else {
+    //       if (isMounted.current) {
+    //         setWeatherData(weather);
+    //         setFilteredForecast(filteredForecastWeather);
+    //         console.log('Weather updated due to AppState Change...');
+    //       }
+    //     }
+    //   } else {
+    //     if (isMounted.current) {
+    //       setError("Can't get your location");
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   if (isMounted.current) {
+    //     setError('Error while retrieving the weather');
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -141,9 +134,9 @@ export default function MyWeather({route, navigation}: any) {
     // console.log("From MorningScreen")
     // console.log(weatherData)
     // if (isMounted.current) {
-      //   if (firstMount.current) {
-        //     firstMount.current = false;
-        //     // return setForegroundState({state: false});
+    //   if (firstMount.current) {
+    //     firstMount.current = false;
+    //     // return setForegroundState({state: false});
     //     return;
     //   }
     //   if (firstMount.current === false && foregroundState.state === true) {
@@ -153,9 +146,9 @@ export default function MyWeather({route, navigation}: any) {
     //     }
     //   }
     // }
-    // console.log(searchString);
+    // console.log("WeatherAndForecastData=> "+JSON.stringify(weatherAndForecastData));
   });
-  
+
   return (
     <>
       <Header
@@ -173,7 +166,6 @@ export default function MyWeather({route, navigation}: any) {
             style={suggestionMorningStyle}
             svgParams={svgParamsSuggestionMorning}
             searchString={searchString}
-
           />
         </View>
       ) : null}
@@ -197,9 +189,7 @@ export default function MyWeather({route, navigation}: any) {
           <MapIcon fill={enums.Colors.blue} height={'25'} />
           <Text style={styles.locationText}>
             {weatherAndForecastData
-              ? weatherAndForecastData.weatherData.name +
-                ',' +
-                weatherAndForecastData.weatherData.sys.country
+              ? weatherAndForecastData.weatherData.timezone
               : null}
           </Text>
         </View>
@@ -208,7 +198,7 @@ export default function MyWeather({route, navigation}: any) {
           <IconExchanger
             name={
               weatherAndForecastData
-                ? weatherAndForecastData.weatherData.weather[0].icon
+                ? weatherAndForecastData.weatherData.current.weather[0].icon
                 : '01n'
             }
             dayColor={enums.Colors.blue}
@@ -232,7 +222,10 @@ export default function MyWeather({route, navigation}: any) {
                 fontSize: 16,
               }}>
               {weatherAndForecastData
-                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).day
+                ? dateIns.getDate(
+                    weatherAndForecastData.weatherData.current.dt +
+                      weatherAndForecastData.weatherData.timezone_offset,
+                  ).day
                 : null}
             </Text>
             <Text
@@ -242,10 +235,16 @@ export default function MyWeather({route, navigation}: any) {
                 fontSize: 16,
               }}>
               {weatherAndForecastData
-                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).month
+                ? dateIns.getDate(
+                    weatherAndForecastData.weatherData.current.dt +
+                      weatherAndForecastData.weatherData.timezone_offset,
+                  ).month
                 : null}{' '}
               {weatherAndForecastData
-                ? dateIns.getDate(weatherAndForecastData.weatherData.dt).dayNum
+                ? dateIns.getDate(
+                    weatherAndForecastData.weatherData.current.dt +
+                      weatherAndForecastData.weatherData.timezone_offset,
+                  ).dayNum
                 : null}
             </Text>
           </View>
@@ -270,7 +269,7 @@ export default function MyWeather({route, navigation}: any) {
                   fontSize: 32,
                 }}>
                 {weatherAndForecastData
-                  ? Math.trunc(weatherAndForecastData.weatherData.main.temp) +
+                  ? Math.trunc(weatherAndForecastData.weatherData.current.temp) +
                     '°'
                   : null}
               </Text>
@@ -292,7 +291,7 @@ export default function MyWeather({route, navigation}: any) {
               around{' '}
               {weatherAndForecastData
                 ? Math.trunc(
-                  weatherAndForecastData.filteredForecast.tonight.temp,
+                    weatherAndForecastData.filteredForecast.firstDay.temp.night,
                   )
                 : null}
               ° to night
@@ -309,8 +308,16 @@ export default function MyWeather({route, navigation}: any) {
             marginBottom: 15,
             alignSelf: 'center',
           }}></View>
-        {/* Separator */}
-        <View
+        {/* More Info */}
+        {weatherAndForecastData ? (
+          <MoreInfo
+            data={weatherAndForecastData.weatherData}
+            svgParams={svgParamsMoreInfoMorning}
+            style={MoreInfoMorningStyle}
+          />
+        ) : null}
+        {/* Forecast Data */}
+        {/* <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-around',
@@ -319,7 +326,7 @@ export default function MyWeather({route, navigation}: any) {
           <View style={{flexDirection: 'column'}}>
             {weatherAndForecastData ? (
               <ForecastOneDay
-              style={forecastDayStyle}
+                style={forecastDayStyle}
                 epochTime={
                   weatherAndForecastData.filteredForecast.morningFirst.date
                 }
@@ -342,7 +349,7 @@ export default function MyWeather({route, navigation}: any) {
                   height: '35',
                 }}
               />
-              ) : null}
+            ) : null}
             <Text>{}</Text>
           </View>
 
@@ -355,7 +362,7 @@ export default function MyWeather({route, navigation}: any) {
                 }
                 morningData={{
                   temp: weatherAndForecastData.filteredForecast.morningDayAfter
-                  .temp,
+                    .temp,
                   name: weatherAndForecastData.filteredForecast.morningDayAfter
                     .icon,
                   dayColor: enums.Colors.blue,
@@ -365,86 +372,20 @@ export default function MyWeather({route, navigation}: any) {
                 afternoonData={{
                   temp: weatherAndForecastData.filteredForecast
                     .afternoonDayAfter.temp,
-                    name: weatherAndForecastData.filteredForecast
+                  name: weatherAndForecastData.filteredForecast
                     .afternoonDayAfter.icon,
                   dayColor: enums.Colors.blue,
                   nightColor: enums.Colors.blue,
                   height: '35',
                 }}
               />
-              ) : null}
-          </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            marginTop: 30,
-          }}>
-          <View style={{flexDirection: 'column'}}>
-            {weatherAndForecastData ? (
-              <ForecastOneDay
-              style={forecastDayStyle}
-              epochTime={
-                weatherAndForecastData.filteredForecast.morningThirdDay.date
-                }
-                morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningThirdDay
-                    .temp,
-                    name: weatherAndForecastData.filteredForecast.morningThirdDay
-                    .icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-                afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast
-                  .afternoonThirdDay.temp,
-                    name: weatherAndForecastData.filteredForecast
-                    .afternoonThirdDay.icon,
-                    dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-                />
             ) : null}
           </View>
-
-          <View style={{flexDirection: 'column'}}>
-            {weatherAndForecastData ? (
-              <ForecastOneDay
-                style={forecastDayStyle}
-                epochTime={
-                  weatherAndForecastData.filteredForecast.morningFourthDay.date
-                }
-                morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningFourthDay
-                  .temp,
-                  name: weatherAndForecastData.filteredForecast.morningFourthDay
-                    .icon,
-                    dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-                afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast
-                  .afternoonFourthDay.temp,
-                  name: weatherAndForecastData.filteredForecast
-                  .afternoonFourthDay.icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-              />
-              ) : null}
-          </View>
-        </View>
+        </View> */}
       </ScrollView>
     </>
   );
 }
-
 
 const styles = StyleSheet.create({
   scrollViewStyle: {
