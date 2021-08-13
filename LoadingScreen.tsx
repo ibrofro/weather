@@ -11,8 +11,7 @@ export default function LoadingScreen({navigation}: any) {
   const {
     state,
     dispatch,
-    setFilteredForecast,
-    setWeatherData,
+   
     setWeatherAndForecastData,
   } = useContext(connState);
   type waydType =
@@ -100,8 +99,8 @@ export default function LoadingScreen({navigation}: any) {
           const ins = new WeatherApiClass(
             // String(longitude),
             // String(latitude),
-            "-122.084",
-            "37.4219983",
+            "135.98333",
+            "33.73333",
             'metric',
           );
           const weatherAndForecastData = await ins.getWeatherAndForecastData();

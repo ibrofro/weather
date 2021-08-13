@@ -1,11 +1,11 @@
 import {StyleSheet} from 'react-native';
 import * as enums from '../enums';
 
-export const forecastDayStyle = StyleSheet.create({
+export const forecastStyle = StyleSheet.create({
   dayStyle: {
     color: enums.Colors.blue,
     fontFamily: enums.Fonts.extraBold,
-    fontSize: 18,
+    fontSize: 22,
   },
   morningStyle: {
     color: enums.Colors.blue,
@@ -14,12 +14,14 @@ export const forecastDayStyle = StyleSheet.create({
     color: enums.Colors.blue,
   },
   widgetContainer: {
-    padding: 10,
+    padding: 15,
     flexDirection: 'row',
     borderRadius: 4,
     backgroundColor: enums.Colors.gray,
-    width: 120,
+    marginTop:15,
+    width: 125,
     alignItems: 'center',
+    justifyContent:"space-around"
   },
   iconExchangerContainer: {
     width: 40,

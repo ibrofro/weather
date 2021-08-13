@@ -14,8 +14,8 @@ import {
   filteredForecastWeatherType,
 } from './types';
 import TimeClass from './classes/TimeClass';
-import ForecastOneDay from './components/ForecastOneDay';
-import {forecastDayStyle} from './styles/forecastStyle';
+import Forecast from './components/Forecast';
+import {forecastStyle} from './styles/forecastStyle';
 import {connState} from './App';
 import {
   headerMorningStyle,
@@ -27,7 +27,10 @@ import {
   svgParamsSuggestionMorning,
 } from './styles/suggestionMorningStyle';
 
-import {MoreInfoMorningStyle,svgParamsMoreInfoMorning} from './styles/moreInfoMorningStyle';
+import {
+  MoreInfoMorningStyle,
+  svgParamsMoreInfoMorning,
+} from './styles/moreInfoMorningStyle';
 export default function MyWeather({route, navigation}: any) {
   let {
     foregroundState,
@@ -269,8 +272,9 @@ export default function MyWeather({route, navigation}: any) {
                   fontSize: 32,
                 }}>
                 {weatherAndForecastData
-                  ? Math.trunc(weatherAndForecastData.weatherData.current.temp) +
-                    '°'
+                  ? Math.trunc(
+                      weatherAndForecastData.weatherData.current.temp,
+                    ) + '°'
                   : null}
               </Text>
               <Text
@@ -299,6 +303,7 @@ export default function MyWeather({route, navigation}: any) {
           </View>
         </View>
         {/* Separator */}
+
         <View
           style={{
             width: '100%',
@@ -308,6 +313,7 @@ export default function MyWeather({route, navigation}: any) {
             marginBottom: 15,
             alignSelf: 'center',
           }}></View>
+
         {/* More Info */}
         {weatherAndForecastData ? (
           <MoreInfo
@@ -316,72 +322,27 @@ export default function MyWeather({route, navigation}: any) {
             style={MoreInfoMorningStyle}
           />
         ) : null}
-        {/* Forecast Data */}
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            marginTop: 10,
-          }}>
-          <View style={{flexDirection: 'column'}}>
-            {weatherAndForecastData ? (
-              <ForecastOneDay
-                style={forecastDayStyle}
-                epochTime={
-                  weatherAndForecastData.filteredForecast.morningFirst.date
-                }
-                morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningFirst
-                    .temp,
-                  name: weatherAndForecastData.filteredForecast.morningFirst
-                    .icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-                afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast.afternoonFirst
-                    .temp,
-                  name: weatherAndForecastData.filteredForecast.afternoonFirst
-                    .icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-              />
-            ) : null}
-            <Text>{}</Text>
-          </View>
 
-          <View style={{flexDirection: 'column'}}>
-            {weatherAndForecastData ? (
-              <ForecastOneDay
-                style={forecastDayStyle}
-                epochTime={
-                  weatherAndForecastData.filteredForecast.morningDayAfter.date
-                }
-                morningData={{
-                  temp: weatherAndForecastData.filteredForecast.morningDayAfter
-                    .temp,
-                  name: weatherAndForecastData.filteredForecast.morningDayAfter
-                    .icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-                afternoonData={{
-                  temp: weatherAndForecastData.filteredForecast
-                    .afternoonDayAfter.temp,
-                  name: weatherAndForecastData.filteredForecast
-                    .afternoonDayAfter.icon,
-                  dayColor: enums.Colors.blue,
-                  nightColor: enums.Colors.blue,
-                  height: '35',
-                }}
-              />
-            ) : null}
-          </View>
-        </View> */}
+        <View
+          style={{
+            width: '100%',
+            borderWidth: 0.5,
+            borderColor: enums.Colors.blue,
+            marginTop: 0,
+            marginBottom: 15,
+            alignSelf: 'center',
+          }}></View>
+
+        {/* Forecast Data */}
+        <View
+          style={styles.forecastContainerStyle}>
+          {weatherAndForecastData ? (
+            <Forecast
+              style={forecastStyle}
+              data={weatherAndForecastData.filteredForecast}
+            />
+          ) : null}
+        </View>
       </ScrollView>
     </>
   );
@@ -394,8 +355,7 @@ const styles = StyleSheet.create({
     backgroundColor: enums.Colors.white,
   },
   contentContainerStyle: {
-    // zIndex:1
-    // position:"absolute",
+   
     padding: 30,
     paddingBottom: 200,
   },
@@ -416,4 +376,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '30%',
   },
+  forecastContainerStyle:{
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+    marginBottom:25,
+  }
 });
