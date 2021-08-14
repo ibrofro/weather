@@ -3,6 +3,7 @@ import {StyleSheet, Text, View} from 'react-native';
 import Sun from '../assets/icons/sun.svg';
 import Sunset from '../assets/icons/sunset.svg';
 import Wind from '../assets/icons/wind.svg';
+import Telescope from '../assets/icons/telescope.svg';
 
 import {weatherDataFilteredType} from '../types';
 import {format, fromUnixTime} from 'date-fns';
@@ -57,7 +58,7 @@ export default function MoreInfo(props: {
           ...{alignSelf: 'center', marginTop: 45},
         }}>
         <View>
-          <Wind height={40} width={40} fill={props.svgParams.colorSvg.fill} />
+          <Telescope height={40} width={40} fill={props.svgParams.colorSvg.fill} />
         </View>
         <Text style={props.style.titleText}>Weather Conditions</Text>
         <Text style={props.style.infoText}>

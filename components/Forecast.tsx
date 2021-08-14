@@ -2,9 +2,11 @@ import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import TimeClass from '../classes/TimeClass';
 import {filteredForecastWeatherType} from '../types';
+import * as enums from '../enums';
 export default function Forecast(props: {
   style: any;
   data: filteredForecastWeatherType;
+  morningOrEvening: 'morning' | 'evening' | null;
 }) {
   const dateIns = new TimeClass();
 
@@ -12,7 +14,12 @@ export default function Forecast(props: {
     <>
       <View>
         <View style={{marginBottom: 2}}>
-          <Text style={props.style.dayStyle}>
+          <Text
+            style={
+              props.morningOrEvening === 'morning'
+                ? props.style.dayStyle
+                : {...props.style.dayStyle, ...{color: enums.Colors.white}}
+            }>
             {dateIns.getDate(props.data.firstDay.dt).day}
           </Text>
         </View>
@@ -47,10 +54,11 @@ export default function Forecast(props: {
         </View>
       </View>
 
-
       <View>
         <View style={{marginBottom: 2}}>
-          <Text style={props.style.dayStyle}>
+          <Text style={props.morningOrEvening === 'morning'
+                ? props.style.dayStyle
+                : {...props.style.dayStyle, ...{color: enums.Colors.white}}}>
             {dateIns.getDate(props.data.secondDay.dt).day}
           </Text>
         </View>
@@ -84,7 +92,6 @@ export default function Forecast(props: {
           </View>
         </View>
       </View>
-      
     </>
   );
 }

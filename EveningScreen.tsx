@@ -12,7 +12,7 @@ import {
   filteredForecastWeatherType,
 } from './types';
 import TimeClass from './classes/TimeClass';
-import ForecastOneDay from './components/ForecastOneDay';
+import ForecastOneDay from './components/Forecast';
 import {forecastEveningStyle} from './styles/forecastEveningStyle';
 
 export default function EveningScreen({route, navigation}: any) {

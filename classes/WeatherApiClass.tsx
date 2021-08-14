@@ -110,7 +110,7 @@ export default class WeatherApiClass {
   ): filteredForecastWeatherType {
     const initialEpoch = data.daily[0].dt;
 
-    console.log("Initial Epoch "+ initialEpoch)
+    console.log('Initial Epoch ' + initialEpoch);
     var d = new Date(0);
     d.setUTCSeconds(initialEpoch);
     const date = d.getDate() + 1;
@@ -119,38 +119,16 @@ export default class WeatherApiClass {
     const year = d.getFullYear();
     const tomorrow = new Date(`${year}-${nmonth}-${date}T00:00:00`);
 
-    // console.log(offset)
-    const firstDay = getUnixTime(add(tomorrow, {hours: 20}));
-    const secondDay = getUnixTime(add(tomorrow, {days: 1, hours: 20}));
-
-    const thirdDay = getUnixTime(add(tomorrow, {days: 2, hours: 20}));
-    const fourthDay = getUnixTime(add(tomorrow, {days: 3, hours: 20}));
-
     const forecast = [];
 
-   
     forecast.push(data.daily[1]);
 
-        forecast.push(data.daily[2]);
-     
-        forecast.push(data.daily[3]);
-      
-        forecast.push(data.daily[4]);
+    forecast.push(data.daily[2]);
 
+    forecast.push(data.daily[3]);
 
+    forecast.push(data.daily[4]);
 
-
-    // for (let i = 0; i < data.daily.length; i++) {
-    //   if (data.daily[i].dt === firstDay) {
-    //     forecast.push(data.daily[i]);
-    //   } else if (data.daily[i].dt === secondDay) {
-    //     forecast.push(data.daily[i]);
-    //   } else if (data.daily[i].dt === thirdDay) {
-    //     forecast.push(data.daily[i]);
-    //   } else if (data.daily[i].dt === fourthDay) {
-    //     forecast.push(data.daily[i]);
-    //   }
-    // }
     return {
       firstDay: forecast[0],
       secondDay: forecast[1],

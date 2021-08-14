@@ -11,7 +11,7 @@ export default function LoadingScreen({navigation}: any) {
   const {
     state,
     dispatch,
-   
+
     setWeatherAndForecastData,
   } = useContext(connState);
   type waydType =
@@ -49,8 +49,6 @@ export default function LoadingScreen({navigation}: any) {
       const disconnected = await userIns.disconnect();
       console.log('Disconnected ' + disconnected);
       dispatch({type: 'disconnect'});
-      setFilteredForecast(undefined);
-      setWeatherData(undefined);
     } catch (error) {
       console.log('not disconnected ' + error);
       dispatch({type: 'disconnect'});
@@ -97,18 +95,22 @@ export default function LoadingScreen({navigation}: any) {
         try {
           setWhatAreYouDoing('getting-weather-data');
           const ins = new WeatherApiClass(
-            // String(longitude),
-            // String(latitude),
-            "135.98333",
-            "33.73333",
+            String(longitude),
+            String(latitude),
+            // "135.98333",
+            // "33.73333",
+            // '54.39696',
+            // '24.45118',
             'metric',
           );
           const weatherAndForecastData = await ins.getWeatherAndForecastData();
-          const weather = ins.filterRawToWeatherData(weatherAndForecastData)
-          const filteredForecastWeather = ins.filterRawToForecastData(weatherAndForecastData)
-          console.log(weather)
-          console.log(filteredForecastWeather)
-      
+          const weather = ins.filterRawToWeatherData(weatherAndForecastData);
+          const filteredForecastWeather = ins.filterRawToForecastData(
+            weatherAndForecastData,
+          );
+          console.log(JSON.stringify(weather));
+          console.log(JSON.stringify(filteredForecastWeather));
+
           setWeatherAndForecastData({
             weatherData: weather,
             filteredForecast: filteredForecastWeather,

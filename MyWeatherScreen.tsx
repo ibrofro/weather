@@ -1,4 +1,10 @@
-import React, {useEffect, useState, useContext, useRef} from 'react';
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useRef,
+  useLayoutEffect,
+} from 'react';
 import {StyleSheet, Text, View, ScrollView, AppState} from 'react-native';
 import WeatherApiClass from './classes/WeatherApiClass';
 import MapIcon from './assets/icons/map.svg';
@@ -8,11 +14,7 @@ import IconExchanger from './components/IconExchanger';
 import MoreInfo from './components/MoreInfo';
 import Header from './components/Header';
 import Suggestion from './components/Suggestion';
-import {
-  weatherResponseType,
-  forecastWeatherType,
-  filteredForecastWeatherType,
-} from './types';
+
 import TimeClass from './classes/TimeClass';
 import Forecast from './components/Forecast';
 import {forecastStyle} from './styles/forecastStyle';
@@ -22,6 +24,8 @@ import {
   statusBarOption,
   svgParamsHeaderMorning,
 } from './styles/headerMorningStyle';
+
+
 import {
   suggestionMorningStyle,
   svgParamsSuggestionMorning,
@@ -31,6 +35,10 @@ import {
   MoreInfoMorningStyle,
   svgParamsMoreInfoMorning,
 } from './styles/moreInfoMorningStyle';
+import {
+  MoreInfoEveningStyle,
+  svgParamsMoreInfoEvening,
+} from './styles/moreInfoEveningStyle';
 export default function MyWeather({route, navigation}: any) {
   let {
     foregroundState,
@@ -42,18 +50,10 @@ export default function MyWeather({route, navigation}: any) {
   const firstMount = useRef(false);
   const isMounted = useRef(false);
   const [searchString, setSearchString] = useState<string | null>(null);
-
-  // const [weather, setWeather] = useState<weatherResponseType>(
-  //   route.params.weather,
-  // );
-  // const [forecastWeather, setForecastWeather] = useState<forecastWeatherType>(
-  //   route.params.forecastWeather,
-  // );
-  // const [filteredForecast, setFilteredForecast] =
-  //   useState<filteredForecastWeatherType>(route.params.filteredForecastWeather);
+  const [morningOrEvening, setMorningOrEvening] = useState<
+    'morning' | 'evening' | null
+  >();
   const [error, setError] = useState<string>('');
-  // const appState = useRef(AppState.currentState);
-  // const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const dateIns = new TimeClass();
   const getCoords = async () => {
     try {
@@ -133,38 +133,38 @@ export default function MyWeather({route, navigation}: any) {
     };
   }, []);
 
-  useEffect(() => {
-    // console.log("From MorningScreen")
-    // console.log(weatherData)
-    // if (isMounted.current) {
-    //   if (firstMount.current) {
-    //     firstMount.current = false;
-    //     // return setForegroundState({state: false});
-    //     return;
-    //   }
-    //   if (firstMount.current === false && foregroundState.state === true) {
-    //     updateWeather();
-    //     if (isMounted.current) {
-    //       setForegroundState({state: false});
-    //     }
-    //   }
-    // }
-    // console.log("WeatherAndForecastData=> "+JSON.stringify(weatherAndForecastData));
-  });
+  
 
+ 
+  useLayoutEffect(() => {
+    const icon = weatherAndForecastData?.weatherData?.current?.weather[0]?.icon;
+    console.log(icon && icon.indexOf('d') > -1);
+    if (icon && icon.indexOf('d') > -1) {
+      setMorningOrEvening('morning');
+    } else {
+      setMorningOrEvening('evening');
+    }
+  });
+  
   return (
     <>
-      <Header
-        styles={headerMorningStyle}
-        svgParams={svgParamsHeaderMorning}
-        statusBarOption={statusBarOption}
-        searchString={searchString}
-        setSearchString={setSearchString}
-      />
-      {console.log('typeOF => ' + typeof searchString)}
+      {weatherAndForecastData ? (
+        <Header
+          styles={headerMorningStyle}
+          svgParams={svgParamsHeaderMorning}
+          statusBarOption={statusBarOption}
+          searchString={searchString}
+          setSearchString={setSearchString}
+        />
+      ) : null}
 
       {searchString ? (
-        <View style={{backgroundColor: 'white'}}>
+        <View
+          style={
+            morningOrEvening === 'morning'
+              ? {backgroundColor: enums.Colors.white}
+              : {backgroundColor: enums.Colors.blue}
+          }>
           <Suggestion
             style={suggestionMorningStyle}
             svgParams={svgParamsSuggestionMorning}
@@ -187,10 +187,26 @@ export default function MyWeather({route, navigation}: any) {
       ) : null}
       <ScrollView
         contentContainerStyle={styles.contentContainerStyle}
-        style={styles.scrollViewStyle}>
+        style={
+          morningOrEvening == 'morning'
+            ? styles.scrollViewStyle
+            : styles.scrollViewStyleEvening
+        }>
         <View style={styles.locationContainer}>
-          <MapIcon fill={enums.Colors.blue} height={'25'} />
-          <Text style={styles.locationText}>
+          <MapIcon
+            fill={
+              morningOrEvening == 'morning'
+                ? enums.Colors.blue
+                : enums.Colors.white
+            }
+            height={'25'}
+          />
+          <Text
+            style={
+              morningOrEvening === 'morning'
+                ? styles.locationText
+                : {...styles.locationText, ...{color: enums.Colors.white}}
+            }>
             {weatherAndForecastData
               ? weatherAndForecastData.weatherData.timezone
               : null}
@@ -205,7 +221,7 @@ export default function MyWeather({route, navigation}: any) {
                 : '01n'
             }
             dayColor={enums.Colors.blue}
-            nightColor={enums.Colors.blue}
+            nightColor={enums.Colors.white}
             height={'100%'}
           />
         </View>
@@ -219,11 +235,11 @@ export default function MyWeather({route, navigation}: any) {
           }}>
           <View style={{paddingTop: 5}}>
             <Text
-              style={{
-                color: enums.Colors.blue,
-                fontFamily: enums.Fonts.bold,
-                fontSize: 16,
-              }}>
+              style={
+                morningOrEvening === 'morning'
+                  ? styles.dateDayStyle
+                  : {...styles.dateDayStyle, ...{color: enums.Colors.white}}
+              }>
               {weatherAndForecastData
                 ? dateIns.getDate(
                     weatherAndForecastData.weatherData.current.dt +
@@ -232,11 +248,11 @@ export default function MyWeather({route, navigation}: any) {
                 : null}
             </Text>
             <Text
-              style={{
-                color: enums.Colors.blue,
-                fontFamily: enums.Fonts.regular,
-                fontSize: 16,
-              }}>
+              style={
+                morningOrEvening === 'morning'
+                  ? styles.dateMonthStyle
+                  : {...styles.dateMonthStyle, ...{color: enums.Colors.white}}
+              }>
               {weatherAndForecastData
                 ? dateIns.getDate(
                     weatherAndForecastData.weatherData.current.dt +
@@ -253,24 +269,27 @@ export default function MyWeather({route, navigation}: any) {
           </View>
           {/* Separator */}
           <View
-            style={{
-              height: '100%',
-              borderWidth: 0.5,
-              borderColor: enums.Colors.blue,
-              width: 1,
-              marginLeft: 15,
-              marginRight: 15,
-            }}></View>
+            style={
+              morningOrEvening === 'morning'
+                ? styles.separatorStyle
+                : {
+                    ...styles.separatorStyle,
+                    ...{borderColor: enums.Colors.white},
+                  }
+            }></View>
           {/* Separator */}
 
           <View style={{}}>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text
-                style={{
-                  color: enums.Colors.blue,
-                  fontFamily: enums.Fonts.extraBold,
-                  fontSize: 32,
-                }}>
+                style={
+                  morningOrEvening === 'morning'
+                    ? styles.weatherDigitStyle
+                    : {
+                        ...styles.weatherDigitStyle,
+                        ...{color: enums.Colors.white},
+                      }
+                }>
                 {weatherAndForecastData
                   ? Math.trunc(
                       weatherAndForecastData.weatherData.current.temp,
@@ -278,20 +297,26 @@ export default function MyWeather({route, navigation}: any) {
                   : null}
               </Text>
               <Text
-                style={{
-                  color: enums.Colors.blue,
-                  fontFamily: enums.Fonts.regular,
-                  fontSize: 32,
-                }}>
+                style={
+                  morningOrEvening === 'morning'
+                    ? styles.celciusStyle
+                    : {
+                        ...styles.celciusStyle,
+                        ...{color: enums.Colors.white},
+                      }
+                }>
                 C
               </Text>
             </View>
             <Text
-              style={{
-                fontFamily: enums.Fonts.regular,
-                fontSize: 16,
-                marginTop: -6,
-              }}>
+              style={
+                morningOrEvening === 'morning'
+                  ? styles.nightTextStyle
+                  : {
+                      ...styles.nightTextStyle,
+                      ...{color: enums.Colors.white},
+                    }
+              }>
               around{' '}
               {weatherAndForecastData
                 ? Math.trunc(
@@ -305,41 +330,49 @@ export default function MyWeather({route, navigation}: any) {
         {/* Separator */}
 
         <View
-          style={{
-            width: '100%',
-            borderWidth: 0.5,
-            borderColor: enums.Colors.blue,
-            marginTop: 15,
-            marginBottom: 15,
-            alignSelf: 'center',
-          }}></View>
+          style={
+            morningOrEvening === 'morning'
+              ? styles.separatorHorizontalStyle
+              : {
+                  ...styles.separatorHorizontalStyle,
+                  ...{borderColor: enums.Colors.white},
+                }
+          }></View>
 
         {/* More Info */}
         {weatherAndForecastData ? (
           <MoreInfo
             data={weatherAndForecastData.weatherData}
-            svgParams={svgParamsMoreInfoMorning}
-            style={MoreInfoMorningStyle}
+            svgParams={
+              morningOrEvening === 'morning'
+                ? svgParamsMoreInfoMorning
+                : svgParamsMoreInfoEvening
+            }
+            style={
+              morningOrEvening === 'morning'
+                ? MoreInfoMorningStyle
+                : MoreInfoEveningStyle
+            }
           />
         ) : null}
 
         <View
-          style={{
-            width: '100%',
-            borderWidth: 0.5,
-            borderColor: enums.Colors.blue,
-            marginTop: 0,
-            marginBottom: 15,
-            alignSelf: 'center',
-          }}></View>
+          style={
+            morningOrEvening === 'morning'
+              ? styles.separatorHorizontalStyle2
+              : {
+                  ...styles.separatorHorizontalStyle2,
+                  ...{borderColor: enums.Colors.white},
+                }
+          }></View>
 
         {/* Forecast Data */}
-        <View
-          style={styles.forecastContainerStyle}>
+        <View style={styles.forecastContainerStyle}>
           {weatherAndForecastData ? (
             <Forecast
               style={forecastStyle}
               data={weatherAndForecastData.filteredForecast}
+              morningOrEvening={morningOrEvening}
             />
           ) : null}
         </View>
@@ -354,12 +387,65 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: enums.Colors.white,
   },
+  scrollViewStyleEvening: {
+    height: '20%',
+    width: '100%',
+    backgroundColor: enums.Colors.blue,
+  },
   contentContainerStyle: {
-   
     padding: 30,
     paddingBottom: 200,
   },
+  dateDayStyle: {
+    color: enums.Colors.blue,
+    fontFamily: enums.Fonts.bold,
+    fontSize: 16,
+  },
+  celciusStyle: {
+    color: enums.Colors.blue,
+    fontFamily: enums.Fonts.regular,
+    fontSize: 32,
+  },
+  nightTextStyle: {
+    fontFamily: enums.Fonts.regular,
+    fontSize: 16,
+    marginTop: -6,
+    color: enums.Colors.blue,
+  },
+  weatherDigitStyle: {
+    color: enums.Colors.blue,
+    fontFamily: enums.Fonts.extraBold,
+    fontSize: 32,
+  },
+  separatorStyle: {
+    height: '100%',
+    borderWidth: 0.5,
+    borderColor: enums.Colors.blue,
+    marginLeft: 15,
+    marginRight: 15,
+  },
 
+  separatorHorizontalStyle: {
+    width: '100%',
+    borderWidth: 0.5,
+    borderColor: enums.Colors.blue,
+    marginTop: 15,
+    marginBottom: 15,
+    alignSelf: 'center',
+  },
+  separatorHorizontalStyle2: {
+    width: '100%',
+    borderWidth: 0.5,
+    borderColor: enums.Colors.blue,
+    marginTop: 0,
+    marginBottom: 15,
+    alignSelf: 'center',
+  },
+  dateMonthStyle: {
+    color: enums.Colors.blue,
+    fontFamily: enums.Fonts.regular,
+    fontSize: 16,
+  },
   locationContainer: {
     alignItems: 'center',
     marginBottom: 18,
@@ -370,16 +456,17 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontFamily: enums.Fonts.bold,
     fontSize: 16,
+    color: enums.Colors.blue,
   },
   iconContainer: {
     alignItems: 'center',
     width: '100%',
     height: '30%',
   },
-  forecastContainerStyle:{
+  forecastContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 10,
-    marginBottom:25,
-  }
+    marginBottom: 25,
+  },
 });
