@@ -6,7 +6,7 @@ import * as enums from '../enums';
 export default function Forecast(props: {
   style: any;
   data: filteredForecastWeatherType;
-  morningOrEvening: 'morning' | 'evening' | null;
+  morningOrEvening: 'morning' | 'evening';
 }) {
   const dateIns = new TimeClass();
 

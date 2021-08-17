@@ -312,3 +312,8 @@ export type weatherDataFilteredType = {
     pop: number;
   };
 };
+
+export type weatherAndForecastDataType = {
+  weatherData: weatherDataFilteredType;
+  filteredForecast: filteredForecastWeatherType;
+};

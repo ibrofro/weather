@@ -4,7 +4,7 @@ import MapIcon from '../assets/icons/map.svg';
 import countriesJsonFile from '../node_modules/worldcities/data/countries.json';
 import citiesJsonFile from '../node_modules/worldcities/data/cities.json';
 import {useNavigation, DrawerActions} from '@react-navigation/native';
-
+import * as enums from '../enums';
 export default function Suggestion(props: {
   style: any;
   svgParams: any;
@@ -127,44 +127,8 @@ export default function Suggestion(props: {
     return result as cityType;
   };
 
-  type itemType = {
-    item: {
-      country: string;
-      cities: {
-        name: string;
-        lat: number;
-        lon: number;
-        index: number;
-      }[];
-    };
-  };
-  const renderCountryAndRelatedCities = ({item}: itemType) => (
-    <View style={props.style.itemContainer}>
-      <Text style={props.style.countryText}>{item.country}</Text>
-
-      {item.cities.map((element, index) => {
-        return (
-          <TouchableOpacity key={element.index}>
-            <View style={props.style.iconAndTextContainer}>
-              <View style={props.style.locationIconContainer}>
-                <MapIcon
-                  width={props.svgParams.mapIconSvg.width}
-                  height={props.svgParams.mapIconSvg.height}
-                  fill={props.svgParams.mapIconSvg.fill}
-                />
-              </View>
-              <View style={props.style.suggestionContainer}>
-                <Text style={props.style.suggestionText}>{element.name}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        );
-      })}
-
-      <View style={props.style.separator}></View>
-    </View>
-  );
-
+ 
+ 
   type itemCityType = {
     item: {
       name: string;
@@ -175,29 +139,31 @@ export default function Suggestion(props: {
     };
   };
   const renderCities = ({item}: itemCityType) => (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('SearchResultScreen', {
-          lon: item.lon,
-          lat: item.lat,
-        });
-      }}>
-      <View style={props.style.itemContainer}>
-        <View style={props.style.iconAndTextContainer}>
-          <View style={props.style.locationIconContainer}>
-            <MapIcon
-              width={props.svgParams.mapIconSvg.width}
-              height={props.svgParams.mapIconSvg.height}
-              fill={props.svgParams.mapIconSvg.fill}
-            />
+    <View>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('SearchResultScreen', {
+            lon: item.lon,
+            lat: item.lat,
+          });
+        }}>
+        <View style={props.style.itemContainer}>
+          <View style={props.style.iconAndTextContainer}>
+            <View style={props.style.locationIconContainer}>
+              <MapIcon
+                width={props.svgParams.mapIconSvg.width}
+                height={props.svgParams.mapIconSvg.height}
+                fill={props.svgParams.mapIconSvg.fill}
+              />
+            </View>
+            <Text style={props.style.suggestionText}>
+              {item.name}/{item.continent}
+            </Text>
           </View>
-          <Text style={props.style.suggestionText}>
-            {item.name}/{item.continent}
-          </Text>
+          <View style={props.style.separator}></View>
         </View>
-        <View style={props.style.separator}></View>
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </View>
   );
 
   // useEffect(() => {
@@ -243,6 +209,22 @@ export default function Suggestion(props: {
 
   return (
     <View>
+      {/* <TouchableOpacity
+            onPress={() => {}}
+            style={{
+              alignSelf: 'center',
+              marginTop: 10,
+              marginBottom: 10,
+              backgroundColor: 'white',
+              // position:"relative",
+              // bottom:54,
+              padding: 8,
+              borderRadius: 5,
+            }}>
+            <Text style={{color: 'red', fontFamily: enums.Fonts.bold}}>
+              Close
+            </Text>
+          </TouchableOpacity> */}
       {cities !== null ? (
         <View style={props.style.container}>
           <FlatList
@@ -251,6 +233,7 @@ export default function Suggestion(props: {
             initialNumToRender={7}
             keyExtractor={i => i.index.toString()}
           />
+          
         </View>
       ) : null}
     </View>

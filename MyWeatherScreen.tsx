@@ -51,8 +51,8 @@ export default function MyWeather({route, navigation}: any) {
   const isMounted = useRef(false);
   const [searchString, setSearchString] = useState<string | null>(null);
   const [morningOrEvening, setMorningOrEvening] = useState<
-    'morning' | 'evening' | null
-  >();
+    'morning' | 'evening'
+  >("morning");
   const [error, setError] = useState<string>('');
   const dateIns = new TimeClass();
   const getCoords = async () => {
@@ -169,6 +169,7 @@ export default function MyWeather({route, navigation}: any) {
             style={suggestionMorningStyle}
             svgParams={svgParamsSuggestionMorning}
             searchString={searchString}
+            setSearchString={setSearchString}
           />
         </View>
       ) : null}

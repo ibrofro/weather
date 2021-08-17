@@ -16,7 +16,7 @@ export default function MoreInfo(props: {
   const formatTime = (time: number, timezoneOffset: number) => {
     const goodTime = format(
       fromUnixTime(Number(time + timezoneOffset)),
-      'HH:mm bb',
+      'HH:mm ',
     );
     return goodTime;
   };
