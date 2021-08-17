@@ -14,7 +14,7 @@ import IconExchanger from './components/IconExchanger';
 import MoreInfo from './components/MoreInfo';
 import Header from './components/Header';
 import Suggestion from './components/Suggestion';
-
+import {SearchContext} from './StackNavSearch';
 import TimeClass from './classes/TimeClass';
 import Forecast from './components/Forecast';
 import {forecastStyle} from './styles/forecastStyle';
@@ -24,7 +24,6 @@ import {
   statusBarOption,
   svgParamsHeaderMorning,
 } from './styles/headerMorningStyle';
-
 
 import {
   suggestionMorningStyle,
@@ -47,12 +46,12 @@ export default function MyWeather({route, navigation}: any) {
     setWeatherAndForecastData,
   } = useContext(connState);
 
+  let {setSearchString, searchString} = useContext(SearchContext);
   const firstMount = useRef(false);
   const isMounted = useRef(false);
-  const [searchString, setSearchString] = useState<string | null>(null);
   const [morningOrEvening, setMorningOrEvening] = useState<
     'morning' | 'evening'
-  >("morning");
+  >('morning');
   const [error, setError] = useState<string>('');
   const dateIns = new TimeClass();
   const getCoords = async () => {
@@ -133,9 +132,6 @@ export default function MyWeather({route, navigation}: any) {
     };
   }, []);
 
-  
-
- 
   useLayoutEffect(() => {
     const icon = weatherAndForecastData?.weatherData?.current?.weather[0]?.icon;
     console.log(icon && icon.indexOf('d') > -1);
@@ -145,7 +141,7 @@ export default function MyWeather({route, navigation}: any) {
       setMorningOrEvening('evening');
     }
   });
-  
+
   return (
     <>
       {weatherAndForecastData ? (

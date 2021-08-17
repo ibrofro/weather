@@ -46,6 +46,7 @@ export default function Header(
               onChangeText={text => {
                 props.setSearchString(text);
               }}
+              maxLength={40}
               placeholder="City name ex:London "
             />
           </View>

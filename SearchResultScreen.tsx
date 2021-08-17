@@ -12,12 +12,13 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+
 import WeatherApiClass from './classes/WeatherApiClass';
 import MapIcon from './assets/icons/map.svg';
 import * as enums from './enums';
 import IconExchanger from './components/IconExchanger';
 import MoreInfo from './components/MoreInfo';
-
+import {SearchContext} from './StackNavSearch';
 import TimeClass from './classes/TimeClass';
 import Forecast from './components/Forecast';
 import {forecastStyle} from './styles/forecastStyle';
@@ -40,6 +41,7 @@ export default function SearchResultScreen({route}: any) {
   const [morningOrEvening, setMorningOrEvening] = useState<
     'morning' | 'evening'
   >('morning');
+
   const dateIns = new TimeClass();
 
   const formatTime = (time: number, timezoneOffset: number) => {
@@ -49,6 +51,8 @@ export default function SearchResultScreen({route}: any) {
     );
     return goodTime;
   };
+  let {setSearchString, searchString} = useContext(SearchContext);
+
   const SearchStatus = () => {
     return (
       <View style={styles.pageContainer}>
@@ -69,7 +73,9 @@ export default function SearchResultScreen({route}: any) {
       </View>
     );
   };
- 
+  useLayoutEffect(() => {
+    setSearchString(null);
+  });
   useEffect(() => {
     (async () => {
       try {
