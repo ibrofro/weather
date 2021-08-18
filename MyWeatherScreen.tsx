@@ -165,7 +165,6 @@ export default function MyWeather({route, navigation}: any) {
             style={suggestionMorningStyle}
             svgParams={svgParamsSuggestionMorning}
             searchString={searchString}
-            setSearchString={setSearchString}
           />
         </View>
       ) : null}
@@ -205,7 +204,7 @@ export default function MyWeather({route, navigation}: any) {
                 : {...styles.locationText, ...{color: enums.Colors.white}}
             }>
             {weatherAndForecastData
-              ? weatherAndForecastData.weatherData.timezone
+              ? weatherAndForecastData.weatherData.location
               : null}
           </Text>
         </View>

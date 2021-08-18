@@ -20,7 +20,7 @@ export default function LoadingScreen({navigation}: any) {
     | 'getting-permission'
     | 'loading'
     | 'getting-weather-data'
-    | 'getting-forecast-data';
+    | 'getting-the-position';
   const [whatAreYouDoing, setWhatAreYouDoing] = useState<waydType>('loading');
 
   const [error, setError] = useState<string | null>(null);
@@ -89,11 +89,9 @@ export default function LoadingScreen({navigation}: any) {
         const coords = await getCoords();
         const longitude = coords?.coords.longitude;
         const latitude = coords?.coords.latitude;
-        // console.log(coords?.coords.longitude);
-        // console.log(coords?.coords.latitude);
+
         // Get the weather data.
         try {
-          setWhatAreYouDoing('getting-weather-data');
           const ins = new WeatherApiClass(
             String(longitude),
             String(latitude),
@@ -103,16 +101,21 @@ export default function LoadingScreen({navigation}: any) {
             // '24.45118',
             'metric',
           );
+          setWhatAreYouDoing('getting-the-position');
+          const place = await ins.getPlace();
+          setWhatAreYouDoing('getting-weather-data');
           const weatherAndForecastData = await ins.getWeatherAndForecastData();
           const weather = ins.filterRawToWeatherData(weatherAndForecastData);
           const filteredForecastWeather = ins.filterRawToForecastData(
             weatherAndForecastData,
           );
+          console.log(JSON.stringify(place.display_name));
           console.log(JSON.stringify(weather));
           console.log(JSON.stringify(filteredForecastWeather));
 
+          // return false;
           setWeatherAndForecastData({
-            weatherData: weather,
+            weatherData: {...weather, ...{location: place.display_name}},
             filteredForecast: filteredForecastWeather,
           });
         } catch (error) {
@@ -134,8 +137,8 @@ export default function LoadingScreen({navigation}: any) {
       case 'getting-weather-data':
         return `Getting weather data...`;
 
-      case 'getting-forecast-data':
-        return `Getting forecast weather data...`;
+      case 'getting-the-position':
+        return `Getting your position...`;
       case 'checking-connection-status':
         return `Check the connection status...`;
       default:

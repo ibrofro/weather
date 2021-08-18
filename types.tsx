@@ -265,6 +265,7 @@ export type currentAndForecastType = {
 };
 
 export type weatherDataFilteredType = {
+  location:string;
   lat: number;
   lon: number;
   timezone: string;
@@ -316,4 +317,26 @@ export type weatherDataFilteredType = {
 export type weatherAndForecastDataType = {
   weatherData: weatherDataFilteredType;
   filteredForecast: filteredForecastWeatherType;
+};
+
+ export type placeType =  {
+  place_id: number;
+  licence: string;
+  osm_type: string;
+  osm_id: number;
+  lat: string;
+  lon: string;
+  place_rank: number;
+  category: string;
+  type: string;
+  importance: number;
+  addresstype: string;
+  name: string;
+  display_name: string;
+  address: {
+      region: string;
+      country: string;
+      country_code: string;
+  };
+  boundingbox: string[];
 };

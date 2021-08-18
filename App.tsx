@@ -32,6 +32,7 @@ interface contextInterface {
       }
     | undefined;
   setWeatherAndForecastData: Function;
+  
 }
 interface stateInterface {
   connectionStatus:
@@ -128,6 +129,7 @@ function App() {
         setForegroundState,
         weatherAndForecastData,
         setWeatherAndForecastData,
+      
       }}>
       <NavigationContainer>
         <Stack.Navigator>

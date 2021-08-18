@@ -117,11 +117,7 @@ export default function Suggestion(props: {
       }
     }
 
-    // Remove cities with the same continent
-    // for (let i = 0; i < citiesFounded.length; i++) {
-    //   const element = citiesFounded[i];
-
-    // }
+    
     const result = citiesFounded.length > 0 ? citiesFounded : null;
 
     return result as cityType;

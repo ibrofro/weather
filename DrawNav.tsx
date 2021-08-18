@@ -5,6 +5,7 @@ import MyWeatherScreen from './MyWeatherScreen';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import StackNavSearch from './StackNavSearch';
 import DrawerContent from './components/DrawerContent';
+import * as enums from './enums';
 export default function DrawNav() {
   const Drawer = createDrawerNavigator();
   return (
@@ -14,9 +15,17 @@ export default function DrawNav() {
         options={{headerShown: false}}
         component={StackNavSearch}
       />
+
+
       <Drawer.Screen
+      
+
+
+      
         name="Profile"
-        options={{headerShown: false}}
+        options={{
+          headerShown:false
+        }}
         component={ProfileScreen}
       />
       <Drawer.Screen

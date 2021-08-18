@@ -43,7 +43,7 @@ export default function SearchResultScreen({route}: any) {
   >('morning');
 
   const dateIns = new TimeClass();
-
+  const city = useRef<string | null>();
   const formatTime = (time: number, timezoneOffset: number) => {
     const goodTime = format(
       fromUnixTime(Number(time + timezoneOffset)),
@@ -73,11 +73,11 @@ export default function SearchResultScreen({route}: any) {
       </View>
     );
   };
-  useLayoutEffect(() => {
-    setSearchString(null);
-  });
+
   useEffect(() => {
+    city.current = searchString;
     (async () => {
+      setSearchString(null);
       try {
         const ins = new WeatherApiClass(
           route.params.lon,
@@ -125,13 +125,11 @@ export default function SearchResultScreen({route}: any) {
         }>
         {weatherAndForecastData ? (
           <Text
-            style={{
-              alignSelf: 'center',
-              color: 'white',
-              fontFamily: enums.Fonts.bold,
-              position: 'relative',
-              left: 5,
-            }}>
+            style={
+              morningOrEvening == 'morning'
+                ? styles.timeStyle
+                : {...styles.timeStyle, ...{color: enums.Colors.white}}
+            }>
             it's{' '}
             {formatTime(
               weatherAndForecastData?.weatherData.current.dt,
@@ -156,7 +154,9 @@ export default function SearchResultScreen({route}: any) {
                 : {...styles.locationText, ...{color: enums.Colors.white}}
             }>
             {weatherAndForecastData
-              ? weatherAndForecastData.weatherData.timezone
+              ? `${city.current}, ${
+                  weatherAndForecastData.weatherData.timezone.split('/')[0]
+                }`
               : null}
           </Text>
         </View>
@@ -438,5 +438,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: 10,
     marginBottom: 25,
+  },
+  timeStyle: {
+    alignSelf: 'center',
+    color: enums.Colors.blue,
+    fontFamily: enums.Fonts.bold,
+    position: 'relative',
+    left: 5,
   },
 });

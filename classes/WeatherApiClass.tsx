@@ -7,7 +7,7 @@ import {
   weatherResponseType,
   forecastWeatherType,
   filteredForecastWeatherType,
-  forecastItemType,
+  placeType,
   currentAndForecastType,
   weatherDataFilteredType,
 } from '../types';
@@ -45,6 +45,29 @@ export default class WeatherApiClass {
     }
   }
 
+  async getPlace(): Promise<placeType> {
+    const options = {
+      headers: new Headers({'Accept-Language': 'en-US'}),
+    };
+    const url =
+      'https://nominatim.openstreetmap.org/reverse?format=jsonv2&' +
+      'lat=' +
+      this.lat +
+      '&lon=' +
+      this.lon +
+      '&zoom=5';
+    console.log('getPlace => ' + url);
+    const res = await fetch(url, options);
+    if (res.ok) {
+      const jsonRes = await res.json();
+      // console.log(JSON.stringify(jsonRes))
+      return jsonRes;
+    } else {
+      throw new Error(
+        'Something wrong happen, The response status is ' + res.status,
+      );
+    }
+  }
   async getForecastWeather(): Promise<forecastWeatherType> {
     const url =
       'https://api.openweathermap.org/data/2.5/forecast?' +
@@ -95,6 +118,7 @@ export default class WeatherApiClass {
     data: currentAndForecastType,
   ): weatherDataFilteredType {
     const res: weatherDataFilteredType = {
+      location:"",
       lat: data.lat,
       lon: data.lon,
       timezone: data.timezone,

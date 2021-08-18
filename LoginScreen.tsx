@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     marginTop: 25,
-    // borderWidth: 1,
     padding: 5,
     justifyContent: 'flex-start',
   },
