@@ -117,14 +117,41 @@ export default function Suggestion(props: {
       }
     }
 
-    
     const result = citiesFounded.length > 0 ? citiesFounded : null;
 
     return result as cityType;
   };
 
- 
- 
+  function sanitizeForSearch(params: string | null): string | null {
+    if (!params) {
+      return null;
+    }
+    let newStr = params.replace(/\s/g, '-');
+    let anStr = newStr.match(/-[a-z]/g);
+    if (anStr && anStr.length > 0) {
+      let last = [newStr];
+      for (let i = 0; i < anStr.length; i++) {
+        last.push(
+          last[last.length - 1].replace(anStr[i], anStr[i].toUpperCase()),
+        );
+        // console.log(last)
+      }
+      return last[last.length - 1];
+    } else {
+      return params;
+    }
+  }
+
+  function turnFirstToUppercase(params: string | null): string | null {
+    if (params) {
+      const firstChar = params.charAt(0).toUpperCase();
+      const rest = params.slice(1);
+      return firstChar + rest;
+    } else {
+      return null;
+    }
+  }
+
   type itemCityType = {
     item: {
       name: string;
@@ -162,40 +189,13 @@ export default function Suggestion(props: {
     </View>
   );
 
-  // useEffect(() => {
-  //   if (countryFound) {
-  //     const citiesFound = findCities(countryFound);
-  //     if (citiesFound) {
-  //       // console.log('Cities Found ==> ' + JSON.stringify(citiesFound));
-  //       setCountryAndRelatedCities(citiesFound);
-  //       setCountryFound(null);
-  //     }
-  //   }
-  // }, [countryFound]);
-
-  // useEffect(() => {
-  //   setCountryAndRelatedCities(null);
-  //   setCities(null);
-
-  //   const countryFound = findCountry(props.searchString);
-  //   console.log('Country Found ==> ' + JSON.stringify(countryFound));
-  //   if (countryFound) {
-  //     setCountryFound(countryFound);
-  //   } else {
-  //     const citiesFound = findCity(props.searchString);
-  //     if (citiesFound) {
-  //       setCities(citiesFound);
-  //     }
-  //   }
-  //   return () => {
-  //     loadingStatus.current = true;
-  //   };
-  // }, [props.searchString]);
 
   useEffect(() => {
     setCountryAndRelatedCities(null);
     setCities(null);
-    const cities = findCity(props.searchString);
+    let sanitized = sanitizeForSearch(props.searchString);
+    console.log(turnFirstToUppercase(sanitized));
+    const cities = findCity(turnFirstToUppercase(sanitized));
     if (cities) {
       setCities(cities);
     } else {
@@ -205,22 +205,6 @@ export default function Suggestion(props: {
 
   return (
     <View>
-      {/* <TouchableOpacity
-            onPress={() => {}}
-            style={{
-              alignSelf: 'center',
-              marginTop: 10,
-              marginBottom: 10,
-              backgroundColor: 'white',
-              // position:"relative",
-              // bottom:54,
-              padding: 8,
-              borderRadius: 5,
-            }}>
-            <Text style={{color: 'red', fontFamily: enums.Fonts.bold}}>
-              Close
-            </Text>
-          </TouchableOpacity> */}
       {cities !== null ? (
         <View style={props.style.container}>
           <FlatList
@@ -229,7 +213,6 @@ export default function Suggestion(props: {
             initialNumToRender={7}
             keyExtractor={i => i.index.toString()}
           />
-          
         </View>
       ) : null}
     </View>
