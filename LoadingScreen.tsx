@@ -42,18 +42,6 @@ export default function LoadingScreen({navigation}: any) {
     }
   };
 
-  // Disconnect the user.
-  const disconnect = async () => {
-    try {
-      const userIns = new UserClass();
-      const disconnected = await userIns.disconnect();
-      console.log('Disconnected ' + disconnected);
-      dispatch({type: 'disconnect'});
-    } catch (error) {
-      console.log('not disconnected ' + error);
-      dispatch({type: 'disconnect'});
-    }
-  };
   const getCoords = async () => {
     try {
       setWhatAreYouDoing('getting-permission');
@@ -61,7 +49,6 @@ export default function LoadingScreen({navigation}: any) {
       if (status === 'granted') {
         setWhatAreYouDoing('getting-location');
         const location = await Location.getCurrentPositionAsync({accuracy: 6});
-        // setAuthorization('granted');
         return location;
       } else {
         console.log('denied');
@@ -109,9 +96,9 @@ export default function LoadingScreen({navigation}: any) {
           const filteredForecastWeather = ins.filterRawToForecastData(
             weatherAndForecastData,
           );
-          console.log(JSON.stringify(place.display_name));
-          console.log(JSON.stringify(weather));
-          console.log(JSON.stringify(filteredForecastWeather));
+          // console.log(JSON.stringify(place.display_name));
+          // console.log(JSON.stringify(weather));
+          // console.log(JSON.stringify(filteredForecastWeather));
 
           // return false;
           setWeatherAndForecastData({
@@ -168,14 +155,7 @@ export default function LoadingScreen({navigation}: any) {
           </View>
         ) : null}
 
-        <TouchableOpacity
-          style={{borderWidth: 1, padding: 10, borderColor: 'white'}}
-          onPress={() => {
-            disconnect();
-            // console.log('echif');
-          }}>
-          <Text style={{color: 'white'}}>Disconnect</Text>
-        </TouchableOpacity>
+       
       </View>
     </View>
   );

@@ -107,7 +107,7 @@ function App() {
       if (backgroundTime.current !== null) {
         const diff = now - backgroundTime.current;
         console.log('difference ' + diff);
-        if(diff > 10){
+        if(diff > 600){
           setWeatherAndForecastData(undefined)
           
         }
@@ -129,13 +129,7 @@ function App() {
       AppState.removeEventListener('change', handleChange);
     };
   }, []);
-  useEffect(() => {
-    // console.log('From App:' + JSON.stringify(state));
-    // console.log('From App weatherData ' + JSON.stringify(weatherData));
-    // console.log(
-    // 'From App (filteredForecast)' + JSON.stringify(filteredForecast),
-    // );
-  });
+  
   return (
     <connState.Provider
       value={{
