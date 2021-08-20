@@ -89,8 +89,8 @@ export default function SearchResultScreen({route}: any) {
         const filteredForecastWeather = ins.filterRawToForecastData(
           weatherAndForecastData,
         );
-        console.log(JSON.stringify(weather));
-        console.log(JSON.stringify(filteredForecastWeather));
+        // console.log(JSON.stringify(weather));
+        // console.log(JSON.stringify(filteredForecastWeather));
         const icon = weather.current.weather[0].icon;
 
         setMorningOrEvening(icon.indexOf('d') > -1 ? 'morning' : 'evening');

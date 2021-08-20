@@ -15,8 +15,9 @@ import {
   weatherResponseType,
   forecastWeatherType,
   filteredForecastWeatherType,
-  weatherDataFilteredType
+  weatherDataFilteredType,
 } from './types';
+import sub from 'date-fns/sub';
 export const connState = React.createContext({} as contextInterface);
 
 interface contextInterface {
@@ -32,7 +33,6 @@ interface contextInterface {
       }
     | undefined;
   setWeatherAndForecastData: Function;
-  
 }
 interface stateInterface {
   connectionStatus:
@@ -91,28 +91,44 @@ function App() {
     | undefined
   >();
   const currentState = useRef(AppState.currentState);
-
+  const backgroundTime = useRef<null | number>(null);
   function handleChange(nextState: any) {
-    console.log('----------AppState on App.tsx----------');
-    console.log('previousState: ' + currentState.current);
-    console.log('nextState: ' + nextState);
+    // console.log('----------AppState on App.tsx----------');
+    // console.log('previousState: ' + currentState.current);
+    // console.log('nextState: ' + nextState);
     if (
-      currentState.current === 'inactive' ||
-      (currentState.current === 'background' && nextState === 'active')
+      // currentState.current === 'inactive' ||
+      currentState.current === 'background' &&
+      nextState === 'active'
     ) {
       console.log('App is in the foreground');
       currentState.current = nextState;
-      setForegroundState({state: true});
+      let now = Math.round(Date.now() / 1000);
+      if (backgroundTime.current !== null) {
+        const diff = now - backgroundTime.current;
+        console.log('difference ' + diff);
+        if(diff > 10){
+          setWeatherAndForecastData(undefined)
+          
+        }
+      }
+    }
+
+    if (currentState.current === 'active' && nextState === 'background') {
+      let time = Math.round(Date.now() / 1000);
+
+      backgroundTime.current = time;
+      console.log('You going to background at ' + time);
     }
     currentState.current = nextState;
   }
-  // useEffect(() => {
-  //   AppState.addEventListener('change', handleChange);
+  useEffect(() => {
+    AppState.addEventListener('change', handleChange);
 
-  //   return () => {
-  //     AppState.removeEventListener('change', handleChange);
-  //   };
-  // }, []);
+    return () => {
+      AppState.removeEventListener('change', handleChange);
+    };
+  }, []);
   useEffect(() => {
     // console.log('From App:' + JSON.stringify(state));
     // console.log('From App weatherData ' + JSON.stringify(weatherData));
@@ -129,12 +145,10 @@ function App() {
         setForegroundState,
         weatherAndForecastData,
         setWeatherAndForecastData,
-      
       }}>
       <NavigationContainer>
         <Stack.Navigator>
-          {state.connectionStatus === 'connected' &&
-          weatherAndForecastData ? (
+          {state.connectionStatus === 'connected' && weatherAndForecastData ? (
             <>
               <Stack.Screen
                 name="DrawNav"
@@ -151,7 +165,7 @@ function App() {
               component={LoginScreen}
             />
           ) : null}
-          
+
           {state.connectionStatus === 'checking-connection-status' ||
           (state.connectionStatus === 'connected' &&
             weatherAndForecastData == undefined) ? (
@@ -161,7 +175,6 @@ function App() {
               component={LoadingScreen}
             />
           ) : null}
-          
         </Stack.Navigator>
       </NavigationContainer>
     </connState.Provider>

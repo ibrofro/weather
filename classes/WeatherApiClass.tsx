@@ -56,11 +56,9 @@ export default class WeatherApiClass {
       '&lon=' +
       this.lon +
       '&zoom=5';
-    console.log('getPlace => ' + url);
     const res = await fetch(url, options);
     if (res.ok) {
       const jsonRes = await res.json();
-      // console.log(JSON.stringify(jsonRes))
       return jsonRes;
     } else {
       throw new Error(
@@ -134,7 +132,7 @@ export default class WeatherApiClass {
   ): filteredForecastWeatherType {
     const initialEpoch = data.daily[0].dt;
 
-    console.log('Initial Epoch ' + initialEpoch);
+    // console.log('Initial Epoch ' + initialEpoch);
     var d = new Date(0);
     d.setUTCSeconds(initialEpoch);
     const date = d.getDate() + 1;

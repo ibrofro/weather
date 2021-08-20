@@ -6,7 +6,6 @@ import React, {
   useLayoutEffect,
 } from 'react';
 import {StyleSheet, Text, View, ScrollView, AppState} from 'react-native';
-import WeatherApiClass from './classes/WeatherApiClass';
 import MapIcon from './assets/icons/map.svg';
 import * as Location from 'expo-location';
 import * as enums from './enums';
