@@ -137,6 +137,16 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            if (project.hasProperty('weatherAppKey.keystore')) {
+                storeFile file('weatherAppKey.keystore')
+                storePassword "weather-app-2021"
+                keyAlias "your-key-alias"
+                keyPassword "weather-app-2021"
+            }
+        }
+    }
     splits {
         abi {
             reset()
@@ -160,6 +170,7 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
+            signingConfig signingConfigs.release
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
