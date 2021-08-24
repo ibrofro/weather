@@ -10,35 +10,33 @@ It also allow user to search the weather for a specific location.
 
 ## Installation
 #### Download directly
-You can directly [download the APK file](https://www.google.com "Google's Homepage") and install on an Android phone.
+You can directly [download the APK file](https://drive.google.com/file/d/1PqveOo1W9N13nVrAQ-gMXJz0LE_H_e6a/view?usp=sharing "weather app APK") and install on an Android phone.
 
-#### Clone and install (make sure you have Android Studio)
+#### Clone and install (make sure you have Android Studio, and a configured simulator)
 
+###### 1 - clone the repository
 ```bash
 git clone https://github.com/ibrofro/weather
 ```
 
-## Usage
+###### 2 - install the dependencies (make sure you are on the weather folder)
+```bash
+npm install 
+```
 
-```python
-import foobar
+###### 3 - clean watchman (optional)
+```bash
+watchman watch-del-all
+```
+###### 4 - start react-native 
+```bash
+npx react-native start
+```
 
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
+###### 5 - Run the app on your running emulator
+```bash
+npx react-native run-android
 ```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
-## License
-[MIT](https://choosealicense.com/licenses/mit/)
